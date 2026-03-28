@@ -1,0 +1,12 @@
+get:
+  tags:
+    - Recipes
+  responses:
+    "200":
+      description: A list of all Recipes
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: '../schemas/recipe/reciperesponse.yaml'
