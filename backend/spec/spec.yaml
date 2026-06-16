@@ -1,0 +1,23 @@
+openapi: 3.0.3
+info:
+  title: Kochfeinde Backend API
+  version: 0.0.1
+
+servers:
+  - url: /api/v1
+
+tags:
+  - name: Recipes
+    description: Used for receiving and modifying existing recipes
+
+
+paths:
+  /docs:
+    get:
+      security: []
+      responses:
+        "200":
+          description: "Ok"
+
+  /recipes:
+    $ref: './paths/recipe/recipe.yaml'

@@ -1,0 +1,29 @@
+{
+  "features": {
+    "ghcr.io/devcontainers-extra/features/ts-node:1": {
+      "version": "1.0.2",
+      "resolved": "ghcr.io/devcontainers-extra/features/ts-node@sha256:f5882fbf39d63424c151918e15a6cf3f3b302036256338718f414dfc488a0e6f",
+      "integrity": "sha256:f5882fbf39d63424c151918e15a6cf3f3b302036256338718f414dfc488a0e6f"
+    },
+    "ghcr.io/devcontainers/features/go:1": {
+      "version": "1.3.4",
+      "resolved": "ghcr.io/devcontainers/features/go@sha256:d85e921f91b41340055bb12b325d9d551170ed04b3b832e33530bf42f167c032",
+      "integrity": "sha256:d85e921f91b41340055bb12b325d9d551170ed04b3b832e33530bf42f167c032"
+    },
+    "ghcr.io/devcontainers/features/node:1": {
+      "version": "1.7.1",
+      "resolved": "ghcr.io/devcontainers/features/node@sha256:8c0de46939b61958041700ee89e3493f3b2e4131a06dc46b4d9423427d06e5f6",
+      "integrity": "sha256:8c0de46939b61958041700ee89e3493f3b2e4131a06dc46b4d9423427d06e5f6"
+    },
+    "ghcr.io/guiyomh/features/just:0": {
+      "version": "0.1.0",
+      "resolved": "ghcr.io/guiyomh/features/just@sha256:8311dff976bd153a54a879021353a7e149963e580022b25af49c45cfc5f13bec",
+      "integrity": "sha256:8311dff976bd153a54a879021353a7e149963e580022b25af49c45cfc5f13bec"
+    },
+    "ghcr.io/itsmechlark/features/postgresql:1": {
+      "version": "1.9.0",
+      "resolved": "ghcr.io/itsmechlark/features/postgresql@sha256:356d919ede2f7dce3f921b424301f965eeeb63e67840afec26eeb362998f08f9",
+      "integrity": "sha256:356d919ede2f7dce3f921b424301f965eeeb63e67840afec26eeb362998f08f9"
+    }
+  }
+}

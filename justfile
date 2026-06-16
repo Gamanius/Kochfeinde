@@ -15,8 +15,12 @@ build:
     cd {{BACKEND_DIR}} && go build -o ./tmp/server ./cmd
 
 [group("Backend")]
-oapi:
-    cd {{BACKEND_DIR}} && oapi-codegen -config oapi.yml public/specs.yaml 
+oapi: bundle
+    cd {{BACKEND_DIR}} && oapi-codegen -config oapi.yml internal/spec/spec.gen.yaml 
+
+[group("Backend")]
+bundle: 
+    cd {{BACKEND_DIR}} && redocly bundle spec/spec.yaml -o internal/spec/spec.gen.yaml
 
 [group("Backend")]
 [group("dev")]

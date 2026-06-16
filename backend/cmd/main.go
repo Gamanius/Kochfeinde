@@ -41,7 +41,8 @@ func main() {
 	mux.Handle("/public/", http.StripPrefix("/public/", fs))
 
 	// Handler B → API
-	mux.Handle("/api/v1/", http.StripPrefix("/api/v1", apihandler))
+	// Handler B → API served at root path
+	mux.Handle("/", apihandler)
 
 
 	if err != nil {
