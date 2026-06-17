@@ -13,7 +13,29 @@ CREATE TABLE ingredients (
 
     title TEXT NOT NULL,
 
-    keywords TEXT [] NOT NULL
+    calories INT NOT NULL DEFAULT 0,
+    totalFat INT NOT NULL DEFAULT 0,
+    fatUnsaturated INT NOT NULL DEFAULT 0,
+    fatSaturated INT NOT NULL DEFAULT 0,
+    cholesterol INT NOT NULL DEFAULT 0,
+    totalCarbohydrates INT NOT NULL DEFAULT 0,
+    totalSugars INT NOT NULL DEFAULT 0,
+    dietaryFiber INT NOT NULL DEFAULT 0,
+    protein INT NOT NULL DEFAULT 0,
+    salt INT NOT NULL DEFAULT 0,
+    water INT NOT NULL DEFAULT 0,
+    vitaminA INT NOT NULL DEFAULT 0,
+    vitaminB12 INT NOT NULL DEFAULT 0,
+    vitaminC INT NOT NULL DEFAULT 0,
+    vitaminD INT NOT NULL DEFAULT 0,
+    potassium INT NOT NULL DEFAULT 0,
+    sodium INT NOT NULL DEFAULT 0,
+    calcium INT NOT NULL DEFAULT 0,
+    iron INT NOT NULL DEFAULT 0,
+
+    density DOUBLE PRECISION DEFAULT NULL,
+
+    keywords TEXT [] NOT NULL 
 );
 
 CREATE TABLE recipes (
@@ -33,7 +55,7 @@ CREATE TABLE recipes (
 CREATE TABLE recipe_step (
     id uuid PRIMARY KEY DEFAULT uuidv7(),
     
-    recipe_id uuid NOT NULL REFERENCES "recipes"(id) ON DELETE CASCADE,
+    recipe_id uuid NOT NULL REFERENCES "recipes" (id) ON DELETE CASCADE,
 
     section_name TEXT DEFAULT NULL,
     position int NOT NULL DEFAULT 0,
@@ -42,8 +64,9 @@ CREATE TABLE recipe_step (
 
 CREATE TABLE recipe_ingredients (
     id uuid PRIMARY KEY DEFAULT uuidv7(),
-    ingredient_id uuid NOT NULL REFERENCES "ingredients" (id) ON DELETE CASCADE,
-    recipe_id uuid NOT NULL REFERENCES "recipes" (id) ON DELETE CASCADE,
+    
+    ingredient_id uuid  NOT NULL REFERENCES "ingredients" (id) ON DELETE RESTRICT,
+    recipe_id uuid      NOT NULL REFERENCES "recipes" (id) ON DELETE CASCADE,
     recipe_step_id uuid NOT NULL REFERENCES "recipe_step" (id) ON DELETE CASCADE,
 
     section_name TEXT DEFAULT NULL,

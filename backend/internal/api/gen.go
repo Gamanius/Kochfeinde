@@ -12,12 +12,36 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/oapi-codegen/runtime"
 	openapi_types "github.com/oapi-codegen/runtime/types"
 )
 
+// RecipeFullResponseModel defines model for RecipeFullResponseModel.
+type RecipeFullResponseModel struct {
+	Description   *string                 `json:"description"`
+	Id            openapi_types.UUID      `json:"id"`
+	Ingredients   []RecipeIngredientModel `json:"ingredients"`
+	PortionNum    int32                   `json:"portion_num"`
+	PortionString string                  `json:"portion_string"`
+	Slug          string                  `json:"slug"`
+	Steps         []RecipeStepModel       `json:"steps"`
+	TimeActive    int32                   `json:"time_active"`
+	TimeTaken     int32                   `json:"time_taken"`
+	Title         string                  `json:"title"`
+}
+
+// RecipeIngredientModel defines model for RecipeIngredientModel.
+type RecipeIngredientModel struct {
+	Amount       float32            `json:"amount"`
+	Id           openapi_types.UUID `json:"id"`
+	IngredientId openapi_types.UUID `json:"ingredient_id"`
+	Position     int32              `json:"position"`
+	SectionName  *string            `json:"section_name,omitempty"`
+}
+
 // RecipeResponseModel defines model for RecipeResponseModel.
 type RecipeResponseModel struct {
-	Description   string             `json:"description"`
+	Description   *string            `json:"description"`
 	Id            openapi_types.UUID `json:"id"`
 	PortionNum    int32              `json:"portion_num"`
 	PortionString string             `json:"portion_string"`
@@ -25,6 +49,19 @@ type RecipeResponseModel struct {
 	TimeActive    int32              `json:"time_active"`
 	TimeTaken     int32              `json:"time_taken"`
 	Title         string             `json:"title"`
+}
+
+// RecipeStepModel defines model for RecipeStepModel.
+type RecipeStepModel struct {
+	Description string             `json:"description"`
+	Id          openapi_types.UUID `json:"id"`
+	Position    int32              `json:"position"`
+	SectionName *string            `json:"section_name,omitempty"`
+}
+
+// NotFound defines model for NotFound.
+type NotFound struct {
+	Error *string `json:"error,omitempty"`
 }
 
 // ServerInterface represents all server handlers.
@@ -35,6 +72,9 @@ type ServerInterface interface {
 
 	// (GET /recipes)
 	GetRecipes(w http.ResponseWriter, r *http.Request)
+
+	// (GET /recipes/{slug})
+	GetRecipesSlug(w http.ResponseWriter, r *http.Request, slug string)
 }
 
 // ServerInterfaceWrapper converts contexts to parameters.
@@ -65,6 +105,32 @@ func (siw *ServerInterfaceWrapper) GetRecipes(w http.ResponseWriter, r *http.Req
 
 	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		siw.Handler.GetRecipes(w, r)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// GetRecipesSlug operation middleware
+func (siw *ServerInterfaceWrapper) GetRecipesSlug(w http.ResponseWriter, r *http.Request) {
+
+	var err error
+	_ = err
+
+	// ------------- Path parameter "slug" -------------
+	var slug string
+
+	err = runtime.BindStyledParameterWithOptions("simple", "slug", r.PathValue("slug"), &slug, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: ""})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "slug", Err: err})
+		return
+	}
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.GetRecipesSlug(w, r, slug)
 	}))
 
 	for _, middleware := range siw.HandlerMiddlewares {
@@ -196,8 +262,13 @@ func HandlerWithOptions(si ServerInterface, options StdHTTPServerOptions) http.H
 
 	m.HandleFunc(http.MethodGet+" "+options.BaseURL+"/docs", wrapper.GetDocs)
 	m.HandleFunc(http.MethodGet+" "+options.BaseURL+"/recipes", wrapper.GetRecipes)
+	m.HandleFunc(http.MethodGet+" "+options.BaseURL+"/recipes/{slug}", wrapper.GetRecipesSlug)
 
 	return m
+}
+
+type NotFoundJSONResponse struct {
+	Error *string `json:"error,omitempty"`
 }
 
 type GetDocsRequestObject struct {
@@ -236,6 +307,42 @@ func (response GetRecipes200JSONResponse) VisitGetRecipesResponse(w http.Respons
 	return err
 }
 
+type GetRecipesSlugRequestObject struct {
+	Slug string `json:"slug"`
+}
+
+type GetRecipesSlugResponseObject interface {
+	VisitGetRecipesSlugResponse(w http.ResponseWriter) error
+}
+
+type GetRecipesSlug200JSONResponse RecipeFullResponseModel
+
+func (response GetRecipesSlug200JSONResponse) VisitGetRecipesSlugResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(200)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type GetRecipesSlug404JSONResponse struct{ NotFoundJSONResponse }
+
+func (response GetRecipesSlug404JSONResponse) VisitGetRecipesSlugResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(404)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
 // StrictServerInterface represents all server handlers.
 type StrictServerInterface interface {
 
@@ -244,6 +351,9 @@ type StrictServerInterface interface {
 
 	// (GET /recipes)
 	GetRecipes(ctx context.Context, request GetRecipesRequestObject) (GetRecipesResponseObject, error)
+
+	// (GET /recipes/{slug})
+	GetRecipesSlug(ctx context.Context, request GetRecipesSlugRequestObject) (GetRecipesSlugResponseObject, error)
 }
 
 type StrictHandlerFunc func(ctx context.Context, w http.ResponseWriter, r *http.Request, request any) (any, error)
@@ -316,6 +426,32 @@ func (sh *strictHandler) GetRecipes(w http.ResponseWriter, r *http.Request) {
 		sh.options.ResponseErrorHandlerFunc(w, r, err)
 	} else if validResponse, ok := response.(GetRecipesResponseObject); ok {
 		if err := validResponse.VisitGetRecipesResponse(w); err != nil {
+			sh.options.ResponseErrorHandlerFunc(w, r, err)
+		}
+	} else if response != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, fmt.Errorf("unexpected response type: %T", response))
+	}
+}
+
+// GetRecipesSlug operation middleware
+func (sh *strictHandler) GetRecipesSlug(w http.ResponseWriter, r *http.Request, slug string) {
+	var request GetRecipesSlugRequestObject
+
+	request.Slug = slug
+
+	handler := func(ctx context.Context, w http.ResponseWriter, r *http.Request, request interface{}) (interface{}, error) {
+		return sh.ssi.GetRecipesSlug(ctx, request.(GetRecipesSlugRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "GetRecipesSlug")
+	}
+
+	response, err := handler(r.Context(), w, r, request)
+
+	if err != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, err)
+	} else if validResponse, ok := response.(GetRecipesSlugResponseObject); ok {
+		if err := validResponse.VisitGetRecipesSlugResponse(w); err != nil {
 			sh.options.ResponseErrorHandlerFunc(w, r, err)
 		}
 	} else if response != nil {

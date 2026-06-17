@@ -1,0 +1,178 @@
+openapi: 3.0.3
+info:
+  title: Kochfeinde Backend API
+  version: 0.0.1
+servers:
+  - url: /api/v1
+tags:
+  - name: Recipes
+    description: Used for receiving and modifying existing recipes
+paths:
+  /docs:
+    get:
+      security: []
+      responses:
+        '200':
+          description: Ok
+  /recipes:
+    get:
+      tags:
+        - Recipes
+      responses:
+        '200':
+          description: A list of all Recipes
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/RecipeResponseModel'
+  /recipes/{slug}:
+    get:
+      tags:
+        - Recipes
+      parameters:
+        - name: slug
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: A full recipe with steps and ingredients
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RecipeFullResponseModel'
+        '404':
+          $ref: '#/components/responses/NotFound'
+components:
+  schemas:
+    RecipeResponseModel:
+      type: object
+      required:
+        - id
+        - slug
+        - title
+        - description
+        - time_active
+        - time_taken
+        - portion_num
+        - portion_string
+      properties:
+        id:
+          type: string
+          format: uuid
+        slug:
+          type: string
+        title:
+          type: string
+        description:
+          type: string
+          nullable: true
+        time_taken:
+          type: integer
+          format: int32
+        time_active:
+          type: integer
+          format: int32
+        portion_num:
+          type: integer
+          format: int32
+        portion_string:
+          type: string
+    RecipeStepModel:
+      type: object
+      required:
+        - id
+        - position
+        - description
+      properties:
+        id:
+          type: string
+          format: uuid
+        section_name:
+          type: string
+          nullable: true
+        position:
+          type: integer
+          format: int32
+        description:
+          type: string
+    RecipeIngredientModel:
+      type: object
+      required:
+        - id
+        - ingredient_id
+        - position
+        - amount
+      properties:
+        id:
+          type: string
+          format: uuid
+        ingredient_id:
+          type: string
+          format: uuid
+        section_name:
+          type: string
+          nullable: true
+        position:
+          type: integer
+          format: int32
+        amount:
+          type: number
+          format: float
+    RecipeFullResponseModel:
+      type: object
+      required:
+        - id
+        - slug
+        - title
+        - description
+        - time_active
+        - time_taken
+        - portion_num
+        - portion_string
+        - steps
+        - ingredients
+      properties:
+        id:
+          type: string
+          format: uuid
+        slug:
+          type: string
+        title:
+          type: string
+        description:
+          type: string
+          nullable: true
+        time_taken:
+          type: integer
+          format: int32
+        time_active:
+          type: integer
+          format: int32
+        portion_num:
+          type: integer
+          format: int32
+        portion_string:
+          type: string
+        steps:
+          type: array
+          items:
+            $ref: '#/components/schemas/RecipeStepModel'
+        ingredients:
+          type: array
+          items:
+            $ref: '#/components/schemas/RecipeIngredientModel'
+  responses:
+    NotFound:
+      description: Couldn't find what you were looking for
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                example: Not found

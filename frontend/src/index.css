@@ -1,0 +1,41 @@
+@import "tailwindcss";
+@plugin "daisyui";
+@plugin "daisyui/theme" {
+  name: "dark";
+  default: true;
+  --color-base-300: oklch(0.35 0 180);
+  --color-base-200: oklch(0.32 0 180);
+  --color-base-100: oklch(0.25 0 180);
+}
+@plugin "daisyui/theme" {
+  name: "light";
+  default: true;
+  --color-base-300: oklch(0.99 0 180);
+  --color-base-200: oklch(0.98 0 180);
+  --color-base-100: oklch(0.97 0 180);
+}
+
+h1 {
+    font-size: var(--text-2xl) /* 1.5rem = 24px */;
+    line-height: var(--tw-leading, var(--text-2xl--line-height));
+    font-weight: var(--font-weight-semibold) /* 600 */;
+}
+
+h2 {
+    font-size: var(--text-xl);
+    line-height: var(--tw-leading, var(--text-xl--line-height));
+    font-weight: var(--font-weight-semibold) /* 600 */;
+}
+
+h3 {
+    font-size: var(--text-base);
+    line-height: var(--tw-leading, var(--text-base--line-height));
+    font-weight: var(--font-weight-semibold) /* 600 */;
+}
+
+hr {
+  border-color: var(--color-base-content);
+    @supports (color: color-mix(in lab, red, red)) {
+      border-color: color-mix(in oklab, var(--color-base-content) 20%, transparent);
+    }
+}

@@ -3,10 +3,11 @@ package main
 import (
 	"log"
 	"net/http"
+	"os"
 
 	"kochfeinde.com/api/internal/lib"
 	"kochfeinde.com/api/internal/middleware"
-	"kochfeinde.com/api/internal/specs"
+	"kochfeinde.com/api/internal/spec"
 )
 
 func withCORS(next http.Handler) http.Handler {
@@ -28,22 +29,13 @@ func withCORS(next http.Handler) http.Handler {
 }
 
 
-func main() {
-	lib.ConnectToDB("postgres://postgres@localhost:5432/mydb")
+func main() {	
+	dbURL := os.Getenv("DATABASE_URL")
+	lib.ConnectToDB(dbURL)
 	defer lib.Close()
 	
-	apihandler, err := specs.InitHandler()
+	apihandler, err := spec.InitHandler()
 	
-
-	mux := http.NewServeMux()
-	// Handler A → static files
-	fs := http.FileServer(http.Dir("./public"))
-	mux.Handle("/public/", http.StripPrefix("/public/", fs))
-
-	// Handler B → API
-	// Handler B → API served at root path
-	mux.Handle("/", apihandler)
-
 
 	if err != nil {
 		panic("Could not init");
@@ -51,7 +43,7 @@ func main() {
 
 	httpServer := http.Server{
 		Addr:    ":8080",
-		Handler: middleware.Logging(withCORS(mux)),
+		Handler: middleware.Logging(withCORS(apihandler)),
 	}
 
 	log.Println("Server running on Port 8080")

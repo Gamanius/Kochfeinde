@@ -30,6 +30,29 @@ sqlc:
 [group("Backend")]
 [group("dev")]
 migrate-reset:
-    dropdb mydb
+    dropdb mydb -f
     createdb mydb
     migrate -path backend/migrations/ -database ${DATABASE_URL}mydb up
+
+[group("Backend")]
+seed: migrate-reset
+    cd {{BACKEND_DIR}} && go run seed.go
+
+[group("Frontend")]
+[group("dev")]
+openapi:
+    cd {{FRONTEND_DIR}} && npm run openapi
+
+[group("Frontend")]
+[group("dev")]
+vite:
+    cd {{FRONTEND_DIR}} && npm run dev
+
+[group("dev")]
+caddy: 
+    caddy run --config Caddyfile-dev
+
+
+[group("dev")]
+[parallel]
+dev: air vite caddy

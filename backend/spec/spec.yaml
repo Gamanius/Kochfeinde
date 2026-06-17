@@ -21,3 +21,6 @@ paths:
 
   /recipes:
     $ref: './paths/recipe/recipe.yaml'
+
+  /recipes/{slug}:
+    $ref: './paths/recipe/recipe.slug.yaml'
