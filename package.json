@@ -1,0 +1,8 @@
+{
+    "name": "kochfeinde-monorepo",
+    "private": true,
+    "workspaces": [
+        "apps/*",
+        "packages/*"
+    ]
+}

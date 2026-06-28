@@ -1,7 +1,7 @@
 http://localhost:8000 {
-	# Backend API
+	# Backend tRPC API
 	handle_path /api/* {
-		reverse_proxy localhost:8080
+		reverse_proxy localhost:3000
 	}
 
 	# Frontend

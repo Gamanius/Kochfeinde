@@ -1,47 +1,13 @@
-BACKEND_DIR := "./backend"
-FRONTEND_DIR := "./frontend"
+BACKEND_DIR := "./apps/server"
+FRONTEND_DIR := "./apps/kochfeinde"
 
 default:
   just --list
 
-
 [group("Backend")]
 [group("dev")]
-air:
-    cd {{BACKEND_DIR}} && air
-
-[group("Backend")]
-build:
-    cd {{BACKEND_DIR}} && go build -o ./tmp/server ./cmd
-
-[group("Backend")]
-oapi: bundle
-    cd {{BACKEND_DIR}} && oapi-codegen -config oapi.yml internal/spec/spec.gen.yaml 
-
-[group("Backend")]
-bundle: 
-    cd {{BACKEND_DIR}} && redocly bundle spec/spec.yaml -o internal/spec/spec.gen.yaml
-
-[group("Backend")]
-[group("dev")]
-sqlc:
-    cd {{BACKEND_DIR}} && sqlc generate
-
-[group("Backend")]
-[group("dev")]
-migrate-reset:
-    dropdb mydb -f
-    createdb mydb
-    migrate -path backend/migrations/ -database ${DATABASE_URL}mydb up
-
-[group("Backend")]
-seed: migrate-reset
-    cd {{BACKEND_DIR}} && go run seed.go
-
-[group("Frontend")]
-[group("dev")]
-openapi:
-    cd {{FRONTEND_DIR}} && npm run openapi
+devserver:
+    cd {{BACKEND_DIR}} && npm run dev
 
 [group("Frontend")]
 [group("dev")]
@@ -52,7 +18,30 @@ vite:
 caddy: 
     caddy run --config Caddyfile-dev
 
-
 [group("dev")]
 [parallel]
-dev: air vite caddy
+dev: devserver vite caddy
+
+# ── Database ───────────────────────────────────────
+
+[group("Database")]
+db-push:
+    cd {{BACKEND_DIR}} && npx drizzle-kit push
+
+[group("Database")]
+db-generate:
+    cd {{BACKEND_DIR}} && npx drizzle-kit generate
+
+[group("Database")]
+db-studio:
+    cd {{BACKEND_DIR}} && npx drizzle-kit studio
+
+[group("Database")]
+db-seed:
+    cd {{BACKEND_DIR}} && npx tsx seed.ts
+
+# ── Install ────────────────────────────────────────
+
+[group("Install")]
+install:
+    npm install
