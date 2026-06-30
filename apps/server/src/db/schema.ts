@@ -13,8 +13,7 @@ export const recipeTable = pgTable('recipe', {
     slug: text().notNull().unique(),
 
     name: text().notNull(),
-    markdownIngredients: text(),
-    markdownSteps: text()
+    markdown: text()
 });
 
 export const ingredientToRecipe = pgTable(
@@ -23,6 +22,7 @@ export const ingredientToRecipe = pgTable(
     recipeId: uuid('recipe_id').notNull().references(() => ingredientTable.id, { onDelete: "cascade" }),
     ingredientId: uuid('ingredient_id').notNull().references(() => recipeTable.id, {onDelete: "restrict"}),
     quantity: text(),
+    unit: text()
   },
   (t) => [primaryKey({ columns: [t.recipeId, t.ingredientId] })],
 );

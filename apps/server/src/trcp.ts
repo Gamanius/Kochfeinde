@@ -9,10 +9,6 @@ const t = initTRPC.context<Context>().create();
 
 export const router = t.router;
 export const publicProcedure = t.procedure.use(async (opts) => {
-    if (!opts.ctx.req) {
-        return opts.next();
-    }
-    console.log(opts.ctx.req.info.url);
     return opts.next()
 });
 

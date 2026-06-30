@@ -5,6 +5,8 @@ import { useForm } from "react-hook-form"
 import { InsertRecipeSchema  } from '@kochfeinde/shared';
 import type {InsertRecipeSchemaType} from '@kochfeinde/shared';
 import { zodResolver } from "@hookform/resolvers/zod"
+import { Suspense } from 'react';
+import RecipeList from '#/components/recipe/recipeList';
 
 export const Route = createFileRoute('/recipe/')({
     component: RouteComponent,
@@ -31,12 +33,8 @@ function RouteComponent() {
     }
 
     return <div>
-        {res.data.map(r => r.name)}
-
-        <form onSubmit={handleSubmit(onSubmit)}>
-            <input {...register("name")} className='input'></input>
-            <p>{errors.name?.message}</p>
-            <button type='submit' className='btn btn-md'>Enter</button>
-        </form>
+        <Suspense>
+            <RecipeList/>
+        </Suspense>
     </div>
 }
