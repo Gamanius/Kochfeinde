@@ -1,6 +1,8 @@
 import { useTRPC } from "#/query/trcp"
 import { useSuspenseQuery } from "@tanstack/react-query"
 import RecipeLink from "./recipeLink";
+import Card from "../card";
+import { Link } from "@tanstack/react-router";
 
 export default function RecipeList() {
     const trcp = useTRPC()
@@ -9,6 +11,11 @@ export default function RecipeList() {
         <>  
             <section className="grid grid-cols-3 gap-2">
                 {res.data.map(r => <RecipeLink key={r.name} recipe={r}></RecipeLink>)}
+                <Link  to="/recipe/add">
+                <Card title="Neues Rezept">
+                    Klicke hier um ein neues Rezept hinzuzufügen
+                </Card>
+                </Link>
             </section>
         </>
     );

@@ -3,7 +3,7 @@ import { useMutation, useQueryClient, useSuspenseQuery } from "@tanstack/react-q
 import Card from '#/components/card';
 import RecipeEditCode from './recipeEditCode';
 import { zodResolver } from "@hookform/resolvers/zod";
-import { PatchRecipeSchema  } from "@kochfeinde/shared";
+import { parseIngredient, PatchRecipeSchema  } from "@kochfeinde/shared";
 import type {PatchRecipeSchemaType} from "@kochfeinde/shared";
 import { useForm } from "react-hook-form";
 import { useRouter } from "@tanstack/react-router";
@@ -43,11 +43,9 @@ export default function RecipeEdit({slug}:{slug:string}) {
 
     const editstate = watch("markdown");
 
+
     return <>
     <Card title={`Rezept "${res.data.name}" bearbeiten`}>
-        <h3>
-            Rezept
-        </h3>
         <form onSubmit={handleSubmit(onSubmit)}>
             <fieldset className="fieldset">
                 <legend className="fieldset-legend">Zutaten Name</legend>
@@ -62,7 +60,7 @@ export default function RecipeEdit({slug}:{slug:string}) {
             </fieldset>
             <RecipeEditCode value={editstate} onChange={(val) => setValue("markdown", val, { shouldDirty: true })} />
             <div className="card-actions justify-end mt-4">
-                <button className="btn btn-primary" type="submit">Speichern</button>
+                <button className="btn btn-primary" type="submit" disabled={mut.isPending}>Speichern</button>
             </div>
         </form>
 

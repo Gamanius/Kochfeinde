@@ -5,12 +5,24 @@ import type {InsertRecipeSchemaType} from '@kochfeinde/shared';
 import { dataTagErrorSymbol, useMutation, useQueryClient } from '@tanstack/react-query'
 import { createFileRoute, useRouter } from '@tanstack/react-router'
 import { useForm } from 'react-hook-form'
+import { useBreadcrumbs } from '#/components/breadcrumbs'
+import { useEffect } from 'react'
 
 export const Route = createFileRoute('/ingredient/add/')({
     component: RouteComponent,
 })
 
 function RouteComponent() {
+    const { setCrumbs } = useBreadcrumbs()
+
+    useEffect(() => {
+        setCrumbs([
+            { label: "Zutaten", path: "/ingredient" },
+            { label: "Neu" },
+        ])
+        return () => setCrumbs([])
+    }, [])
+
     const trcp = useTRPC()
     const query = useQueryClient()
     const router = useRouter()

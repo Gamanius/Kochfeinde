@@ -5,15 +5,22 @@ import { useForm } from "react-hook-form"
 import { InsertRecipeSchema  } from '@kochfeinde/shared';
 import type {InsertRecipeSchemaType} from '@kochfeinde/shared';
 import { zodResolver } from "@hookform/resolvers/zod"
-import { Suspense } from 'react';
+import { Suspense, useEffect } from 'react';
 import RecipeList from '#/components/recipe/recipeList';
+import { useBreadcrumbs } from '#/components/breadcrumbs';
 
 export const Route = createFileRoute('/recipe/')({
     component: RouteComponent,
 })
 
 function RouteComponent() {
-    const trcp = useTRPC()
+    const trcp = useTRPC();
+    const { setCrumbs } = useBreadcrumbs()
+
+    useEffect(() => {
+        setCrumbs([{ label: "Rezepte" }])
+        return () => setCrumbs([])
+    }, [])
     const query = useQueryClient()
     const res = useSuspenseQuery(trcp.recipe.list.queryOptions())
     const mut = useMutation(trcp.recipe.insert.mutationOptions({

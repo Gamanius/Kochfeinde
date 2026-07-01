@@ -29,3 +29,4 @@ export const PatchRecipeSchema = z.object({
     markdown: z.string()
 })
 export type PatchRecipeSchemaType = z.infer<typeof PatchRecipeSchema>
+

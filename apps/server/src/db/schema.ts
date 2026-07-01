@@ -1,5 +1,11 @@
 import { defineRelations, sql } from "drizzle-orm";
-import { char, integer, pgTable, primaryKey, text, uuid, varchar } from "drizzle-orm/pg-core";
+import { char, integer, pgEnum, pgTable, primaryKey, real, text, uuid, varchar } from "drizzle-orm/pg-core";
+
+export const unit = pgEnum("unit", [
+    "LITER",
+    "GRAMM",
+    "PIECE"
+])
 
 export const ingredientTable = pgTable('ingredient', {
     id: uuid().primaryKey().default(sql`uuidv7()`),
@@ -19,10 +25,10 @@ export const recipeTable = pgTable('recipe', {
 export const ingredientToRecipe = pgTable(
   'ingredient_to_recipe',
   {
-    recipeId: uuid('recipe_id').notNull().references(() => ingredientTable.id, { onDelete: "cascade" }),
-    ingredientId: uuid('ingredient_id').notNull().references(() => recipeTable.id, {onDelete: "restrict"}),
-    quantity: text(),
-    unit: text()
+    recipeId: uuid('recipe_id').notNull().references(() => recipeTable.id, { onDelete: "cascade" }),
+    ingredientId: uuid('ingredient_id').notNull().references(() => ingredientTable.id, {onDelete: "restrict"}),
+    quantity: real(),
+    unit: unit(),
   },
   (t) => [primaryKey({ columns: [t.recipeId, t.ingredientId] })],
 );

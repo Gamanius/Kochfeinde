@@ -1,5 +1,8 @@
 import { z } from "zod"
 
+export const IngredientUnit = z.enum(["LITER", "GRAMM", "PIECE"])
+export type IngredientUnitType = z.infer<typeof IngredientUnit>
+
 export const IngredientSchema = z.object({
     name: z.string(),
     slug: z.string(),
@@ -25,3 +28,4 @@ export const InsertIngredientSchema = z.object({
     name: z.string().min(3, {error: "Der Name sollte min. 3 Buchstaben haben"}).max(50, "Der Name sollte nicht mehr als 50 Buchstaben haben")
 })
 export type InsertIngredientSchemaType = z.infer<typeof InsertIngredientSchema>
+

@@ -1,10 +1,10 @@
-import { InsertRecipeSchema, PatchRecipeSchema, QueryRecipeSchema, RecipeSchema, type RecipeListType, type RecipeType } from "@kochfeinde/shared";
+import { InsertRecipeSchema, parseIngredient, PatchRecipeSchema, QueryRecipeSchema, type RecipeListType, type RecipeType } from "@kochfeinde/shared";
 import { protectedProcedure, publicProcedure, router } from "../trcp";
 import { db } from "../db/database"
-import {recipeTable} from "../db/schema"
+import {ingredientTable, ingredientToRecipe, recipeTable} from "../db/schema"
 import { TRPCError } from "@trpc/server";
-import { eq } from "drizzle-orm";
-import { devNull } from "os";
+import { eq, inArray } from "drizzle-orm";
+
 
 export const recipeRouter = router({
     list: publicProcedure.query(async (): Promise<RecipeListType> => {
@@ -53,7 +53,7 @@ export const recipeRouter = router({
 
         
         return {
-            name: res.at(0)
+            recipe: res.at(0),
         }
     }),
     patch: protectedProcedure.input(PatchRecipeSchema).mutation(async (opt) => {
@@ -63,6 +63,7 @@ export const recipeRouter = router({
         })
         .where(eq(recipeTable.slug, opt.input.slug))
         .returning({
+            id: recipeTable.id,
             slug: recipeTable.slug
         })
 
@@ -71,6 +72,28 @@ export const recipeRouter = router({
                 code: "NOT_FOUND"
             })
         }
+
+        const recipe = res[0]
+
+        const ingredients = parseIngredient(opt.input.markdown)
+
+        await db.delete(ingredientToRecipe).where(eq(ingredientToRecipe.recipeId, recipe.id))
+        const all_ings = await db.select()
+            .from(ingredientTable)
+            .where(inArray(ingredientTable.slug, ingredients.map(i => i.ingredient_slug)))
+
+        const slugToId = Object.fromEntries(all_ings.map(i => [i.slug, i.id]))
+
+        await db.insert(ingredientToRecipe).values(ingredients.map(i => {
+            return {
+                recipeId: recipe.id,
+                ingredientId: slugToId[i.ingredient_slug],
+                quantity: i.quantity,
+                unit: i.unit,
+            }
+        }))
+
+
         
         return {
             name: res.at(0)

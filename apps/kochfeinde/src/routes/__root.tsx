@@ -4,9 +4,13 @@ import { TanStackDevtools } from '@tanstack/react-devtools'
 
 import appCss from '../styles.css?url'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { createTRPCClient, httpBatchLink, loggerLink } from '@trpc/client'
+import { createTRPCClient, httpBatchLink } from '@trpc/client'
 import type { AppRouter } from '@kochfeinde/server'
 import { TRPCProvider } from '#/query/trcp'
+import Header from '#/components/header'
+import { BreadcrumbContext } from '#/components/breadcrumbs'
+import type { Crumb } from '#/components/breadcrumbs'
+import { useState } from 'react'
 
 function makeQueryClient() {
   return new QueryClient({
@@ -70,14 +74,17 @@ function RootDocument({ children }: { children: React.ReactNode }) {
     ],
   });
 
+  const [crumbs, setCrumbs] = useState<Crumb[]>([])
 
   return (
+    <BreadcrumbContext value={{ crumbs, setCrumbs }}>
     <html lang="en" suppressHydrationWarning>
         <QueryClientProvider client={queryClient}>
       <TRPCProvider trpcClient={trpcClient} queryClient={queryClient}>
       <head>
         <HeadContent />
       </head>
+      <Header></Header>
       <body className="">
         {children}
 
@@ -97,5 +104,6 @@ function RootDocument({ children }: { children: React.ReactNode }) {
       </TRPCProvider>
     </QueryClientProvider>
     </html>
+    </BreadcrumbContext>
   )
 }

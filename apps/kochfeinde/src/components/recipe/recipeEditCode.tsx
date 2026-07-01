@@ -9,6 +9,7 @@ import DOMPurify from 'dompurify';
 import { useQueryClient } from "@tanstack/react-query";
 import { useTRPC } from "#/query/trcp";
 import { useDebouncedCallback } from "use-debounce";
+import { parseIngredient } from '@kochfeinde/shared';
 
 const boldKeymap: KeyBinding = {
     key: "Ctrl-b",
@@ -88,12 +89,15 @@ export default function RecipeEditCode({
         }
     }, [debouncedFetch]);
 
+    const parsedingredients = parseIngredient(value)
+
     const handleChange = useCallback((val: string) => {
         onChange(val);
     }, [onChange]);
 
     return (
         <div className='grid grid-cols-2 gap-2'>
+            <div>
             <CodeMirror
                 value={value}
                 theme={"dark"}
@@ -106,6 +110,19 @@ export default function RecipeEditCode({
                     ),
                 ]}
             />
+            <h4>
+                Gefundene Zutaten:
+            </h4>
+            <ul>
+                {parsedingredients.map(i => (
+                    <li>
+                        {i.quantity} {i.unit} ingredient/{i.ingredient_slug}
+                    </li>
+                ))}
+            </ul>
+
+            </div>
+
             <article
                 className='prose border-l border-base-300 pl-4'
                 dangerouslySetInnerHTML={{ __html: (md.render(value)) }}
