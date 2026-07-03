@@ -1,4 +1,14 @@
+import MarkdownIt from "markdown-it"
+import DOMPurify from 'dompurify';
 
-export function parseIngredients(input: string) {
-    
+function addCheckboxes(html: string): string {
+    return html
+    .replace(/<li>(.*)<\/li>/g, "<li><span>$1</span></li>")
+    .replace(/<li>\s*/g, '<li><input type="checkbox"> ')
+}
+
+export function renderRecipe(input: string) : string {
+    const md = MarkdownIt();
+
+    return addCheckboxes(DOMPurify.sanitize(md.render(input)))
 }

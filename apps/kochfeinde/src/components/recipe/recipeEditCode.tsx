@@ -10,6 +10,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useTRPC } from "#/query/trcp";
 import { useDebouncedCallback } from "use-debounce";
 import { parseIngredient } from '@kochfeinde/shared';
+import { renderRecipe } from './recipeParser';
 
 const boldKeymap: KeyBinding = {
     key: "Ctrl-b",
@@ -124,8 +125,8 @@ export default function RecipeEditCode({
             </div>
 
             <article
-                className='prose border-l border-base-300 pl-4'
-                dangerouslySetInnerHTML={{ __html: (md.render(value)) }}
+                className='recipe-content border-l border-neutral pl-4'
+                dangerouslySetInnerHTML={{ __html: renderRecipe(value) }}
             />
         </div>
     );

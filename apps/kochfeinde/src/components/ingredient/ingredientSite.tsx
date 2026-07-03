@@ -13,7 +13,7 @@ export default function IngredientSite({slug}:{slug:string}) {
 
     return <Card title={<>
         <div className="flex justify-between w-full">
-            Banane
+            {res.data.name}
             <Link to="/ingredient/$slug/edit" params={{slug: slug}} className="btn btn-ghost btn-square">
                 <SquarePen />
             </Link>
