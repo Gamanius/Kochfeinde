@@ -33,11 +33,12 @@
     "@uiw/react-codemirror": "^4.25.10",
     "codemirror": "^6.0.2",
     "dompurify": "^3.4.11",
-    "lucide-react": "^0.545.0",
+    "lucide-react": "^1.23.0",
     "markdown-it": "^14.2.0",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
     "react-hook-form": "^7.80.0",
+    "slugify": "^1.6.9",
     "tailwindcss": "^4.1.18",
     "use-debounce": "^10.1.1"
   },

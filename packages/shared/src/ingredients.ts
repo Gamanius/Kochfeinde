@@ -1,6 +1,6 @@
 import type { IngredientUnitType } from "./ingredient.schema"
 
-const ingredientSlugRegex = new RegExp(/-\s+(\d*[,.]?\d*)\s*([^\d\n]*)\s+\[\w*\]\(\/ingredient\/(\w*)\)/, "g")
+const ingredientSlugRegex = new RegExp(/-\s+(\d*[,.]?\d*)\s*([^\d\n]*)\s+\[.*\]\(\/ingredient\/(.*)\)/, "g")
 
 type UnitMapping = {
     unit: IngredientUnitType

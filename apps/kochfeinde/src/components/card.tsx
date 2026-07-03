@@ -1,7 +1,8 @@
+import type React from "react";
 import type { PropsWithChildren } from "react";
 
 type CardProps = PropsWithChildren<{
-	title: string;
+	title: string | React.ReactNode;
 }>;
 
 export default function Card({ title, children }: CardProps) {

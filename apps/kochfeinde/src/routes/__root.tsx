@@ -8,9 +8,6 @@ import { createTRPCClient, httpBatchLink } from '@trpc/client'
 import type { AppRouter } from '@kochfeinde/server'
 import { TRPCProvider } from '#/query/trcp'
 import Header from '#/components/header'
-import { BreadcrumbContext } from '#/components/breadcrumbs'
-import type { Crumb } from '#/components/breadcrumbs'
-import { useState } from 'react'
 
 function makeQueryClient() {
   return new QueryClient({
@@ -74,19 +71,20 @@ function RootDocument({ children }: { children: React.ReactNode }) {
     ],
   });
 
-  const [crumbs, setCrumbs] = useState<Crumb[]>([])
-
   return (
-    <BreadcrumbContext value={{ crumbs, setCrumbs }}>
     <html lang="en" suppressHydrationWarning>
         <QueryClientProvider client={queryClient}>
       <TRPCProvider trpcClient={trpcClient} queryClient={queryClient}>
       <head>
         <HeadContent />
       </head>
-      <Header></Header>
-      <body className="">
-        {children}
+      <body>
+        <Header></Header>
+        <main className="grid grid-cols-1 items-center align-middle">
+            <div className='max-w-7xl w-full justify-self-center'>
+                {children}
+            </div>
+        </main>
 
         <TanStackDevtools
           config={{
@@ -104,6 +102,5 @@ function RootDocument({ children }: { children: React.ReactNode }) {
       </TRPCProvider>
     </QueryClientProvider>
     </html>
-    </BreadcrumbContext>
   )
 }

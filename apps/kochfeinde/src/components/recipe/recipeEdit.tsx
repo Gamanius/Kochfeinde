@@ -58,6 +58,8 @@ export default function RecipeEdit({slug}:{slug:string}) {
                     </p>
                 )}
             </fieldset>
+
+
             <RecipeEditCode value={editstate} onChange={(val) => setValue("markdown", val, { shouldDirty: true })} />
             <div className="card-actions justify-end mt-4">
                 <button className="btn btn-primary" type="submit" disabled={mut.isPending}>Speichern</button>

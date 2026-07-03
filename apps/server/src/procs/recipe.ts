@@ -84,19 +84,38 @@ export const recipeRouter = router({
 
         const slugToId = Object.fromEntries(all_ings.map(i => [i.slug, i.id]))
 
-        await db.insert(ingredientToRecipe).values(ingredients.map(i => {
-            return {
-                recipeId: recipe.id,
-                ingredientId: slugToId[i.ingredient_slug],
-                quantity: i.quantity,
-                unit: i.unit,
-            }
-        }))
-
-
+        if (ingredients.length > 0) {
+            await db.insert(ingredientToRecipe).values(ingredients.map(i => {
+                return {
+                    recipeId: recipe.id,
+                    ingredientId: slugToId[i.ingredient_slug],
+                    quantity: i.quantity,
+                    unit: i.unit,
+                }
+            }))
+        }
         
         return {
             name: res.at(0)
         }
+    }),
+    delete: protectedProcedure.input(QueryRecipeSchema).mutation(async (opt) => {
+        const res = await db.delete(recipeTable)
+            .where(eq(recipeTable.slug, opt.input.slug))
+            .returning({
+                id: recipeTable.id,
+                slug: recipeTable.slug
+            })
+        
+        if (res.length === 0) {
+            throw new TRPCError({
+                code: "NOT_FOUND"
+            })
+        }
+
+        return {
+            slug: res[0].slug
+        }
+
     })
 });
