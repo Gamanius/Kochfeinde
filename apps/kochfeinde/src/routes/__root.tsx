@@ -66,12 +66,15 @@ export const Route = createRootRoute({
   shellComponent: RootDocument,
 })
 
+const apiUrl = typeof window !== 'undefined' ? '/api' : (process.env.VITE_API_URL ?? 'http://localhost:3001');
+
+
 function RootDocument({ children }: { children: React.ReactNode }) {
   const queryClient = getQueryClient();
   const trpcClient = createTRPCClient<AppRouter>({
     links: [
       httpBatchLink({
-        url: 'http://localhost:8000/api',
+        url: apiUrl,
         fetch(url, options) {
             return fetch(url, {
             ...options,

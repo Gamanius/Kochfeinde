@@ -11,6 +11,8 @@ export const createContext = async (opts: CreateHTTPContextOptions) => {
 
 export type Context = Awaited<ReturnType<typeof createContext>>;
 
+console.log(`Backend server starting on ${process.env.BACKEND_PORT}`)
+
 // create server
 createHTTPServer({
   middleware: cors(),

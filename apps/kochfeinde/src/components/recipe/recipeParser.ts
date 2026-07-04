@@ -1,5 +1,5 @@
-import MarkdownIt from "markdown-it"
-import DOMPurify from 'isomorphic-dompurify';
+import MarkdownIt from "markdown-it";
+import sanitizeHtml from 'sanitize-html';
 
 function addCheckboxes(html: string): string {
     return html
@@ -10,5 +10,5 @@ function addCheckboxes(html: string): string {
 export function renderRecipe(input: string) : string {
     const md = MarkdownIt();
 
-    return addCheckboxes(DOMPurify.sanitize(md.render(input)))
+    return addCheckboxes(sanitizeHtml(md.render(input)))
 }
