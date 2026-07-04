@@ -1,3 +1,4 @@
+import Card from '#/components/card'
 import { useTRPC } from '#/query/trcp'
 import { useSuspenseQuery } from '@tanstack/react-query'
 import { createFileRoute, Link } from '@tanstack/react-router'
@@ -14,17 +15,15 @@ function App() {
     return (
     <main className="">
         <section className="m-2 grid-cols-2 grid gap-2">
-            <Link className="card bg-base-200" to='/recipe'>
-                <div className='card-body'>
-                    <h2 className='card-title'>Rezepte!</h2>
+            <Link to='/recipe'>
+                <Card title="Rezepte">
                     Es wurden {recipe} Rezepte bisher hochgeladen
-                </div>
+                </Card>
             </Link>
-            <Link className="card bg-base-200" to='/ingredient'>
-                <div className='card-body'>
-                    <h2 className='card-title'>Zutaten</h2>
+            <Link to='/ingredient'>
+                <Card title="Zutaten">
                     Es wurden {ingredient} Zutaten bisher hochgeladen
-                </div>
+                </Card>
             </Link>
         </section>
     </main>

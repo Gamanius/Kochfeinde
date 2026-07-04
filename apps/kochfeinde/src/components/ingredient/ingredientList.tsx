@@ -8,15 +8,18 @@ import { Link } from "@tanstack/react-router"
 export default function IngredientList() {
     const trcp = useTRPC()
     const res = useSuspenseQuery(trcp.ingredient.list.queryOptions())
+    const user = useSuspenseQuery(trcp.auth.get.queryOptions())
     return (
         <>  
             <section className="grid grid-cols-3 gap-2">
                 {res.data.map(r => <IngredientLink key={r.name} ingredient={r}/>)}
+                {user.data === null ? <></>:
                 <Link to="/ingredient/add">
                 <Card title={"Neue Zutat"}>
                     Erstelle eine Zutat die bisher fehlt
                 </Card>
                 </Link>
+                }
             </section>
         </>
     );

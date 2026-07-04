@@ -52,6 +52,9 @@ export default function IngredientDelete({slug}:{slug:string}) {
                         </p>
                     )}
             </fieldset>
+            <p className="text-error">
+                {mut.error?.message}
+            </p>
             <button className="btn btn-error" disabled={mut.isPending}>
                 <Trash2 /> Löschen
             </button>

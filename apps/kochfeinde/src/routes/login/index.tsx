@@ -4,7 +4,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { InsertRecipeSchema, LoginUserSchema  } from '@kochfeinde/shared'
 import type {LoginUserType} from '@kochfeinde/shared';
 import { useQueryClient, useMutation } from '@tanstack/react-query'
-import { createFileRoute, useRouter } from '@tanstack/react-router'
+import { createFileRoute, Link, useRouter } from '@tanstack/react-router'
 import { useForm } from 'react-hook-form'
 
 export const Route = createFileRoute('/login/')({
@@ -45,12 +45,13 @@ function RouteComponent() {
                     <span>Passwort</span>
                     <input type="password" className="input" {...register("password")}/>
                 </label>
+                <Link to='/register' className='link'>
+                    Kein Login?
+                </Link>
                 <p className='text-error'>
                     {mut.error?.message}
                 </p>
-                <div className="card-actions justify-end mt-2">
                     <button className="btn btn-primary" type="submit" disabled={mut.isPending}>Einloggen</button>
-                </div>
             </fieldset>
             </form>
     </Card>

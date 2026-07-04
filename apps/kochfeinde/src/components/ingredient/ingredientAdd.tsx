@@ -115,7 +115,10 @@ export default function IngredientAdd() {
                     ))}
                 </div>
             </fieldset>
-
+            
+            <p className="text-error">
+                {mut.error?.message}
+            </p>
             <div className="card-actions justify-end mt-4">
                 <button className="btn btn-primary">Save</button>
             </div>

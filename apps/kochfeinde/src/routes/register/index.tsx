@@ -32,12 +32,19 @@ function RouteComponent() {
 
     return <Card title="Neuen Account erstellen">
         <form onSubmit={handleSubmit(onSubmit)} className='flex justify-center'>
-            <fieldset className="grid grid-cols-1 gap-4 fieldset bg-base-100 border-neutral-content rounded-box w-xs border p-4">
+            <fieldset className="flex flex-col gap-4 fieldset bg-base-100 border-neutral-content rounded-box w-xs border p-4">
                 <legend className="fieldset-legend">Registrierung</legend>
                 <label className='floating-label'>
-                    <span>Nutzername</span>
+                    <span>Anmelde Name</span>
                     <input type="text" className="input" {...register("name")}/>
                 </label>
+                <span className='label -mt-2 whitespace-normal'> Der Name wird verwendet zum anmelden und kann nicht geändert werden </span>
+                <label className='floating-label'>
+                    <span>Anzeige Name</span>
+                    <input type="text" className="input" {...register("displayname")}/>
+                </label>
+                <span className='label -mt-2 whitespace-normal'> Der Name wird angezeigt und kann später geändert werden </span>
+
                 <label className='floating-label'>
                     <span>Passwort</span>
                     <input type="password" className="input" {...register("password")}/>

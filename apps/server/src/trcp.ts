@@ -42,5 +42,5 @@ export const protectedProcedure = t.procedure.use(async function isAuthed(opts) 
     }
 
     // 3. Nothing works — real UNAUTHORIZED
-    throw new TRPCError({ code: "UNAUTHORIZED" });
+    throw new TRPCError({ code: "UNAUTHORIZED", message: "Sie sind gerade nicht eingeloggt" });
 })

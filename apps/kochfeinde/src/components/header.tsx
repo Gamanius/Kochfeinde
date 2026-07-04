@@ -27,19 +27,21 @@ export default function Header() {
 
             <span className="justify-self-end">
                 {user === null ? <>
-                    <Link to="/login" className="btn btn-ghost btn-square">
+                <div className="hover:aura hover:aura-rainbow p-0.5">
+                    <Link to="/login" className="btn btn-ghost btn-square bg-base-100">
                         <LogIn />
                     </Link>
+                </div>
                 </> : <>
                     <button className="btn" popoverTarget="header-user" style={{ anchorName: "--header-user" } /* as React.CSSProperties */}>
-                        <User/> {user.name.sub}
+                        <User/> {user.displayname}
                     </button>
                 </>}
             </span>
 
             <ul className="dropdown menu w-52 rounded-box bg-base-100 shadow-sm"
             popover="auto" id="header-user" style={{ positionAnchor: "--header-user" } /* as React.CSSProperties */ }>
-                <li><a> <UserCog/> Einstellungen</a></li>
+                <li><Link to="/profile"> <UserCog/> Einstellungen</Link></li>
                 <li><button onClick={() => mut.mutate()}> <LogOut/> Ausloggen</button></li>
             </ul>
         </header>

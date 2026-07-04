@@ -48,6 +48,9 @@ export default function RecipeDelete({slug}:{slug:string}) {
                         </p>
                     )}
             </fieldset>
+            <p className="text-error">
+                {mut.error?.message}
+            </p>
             <button className="btn btn-error">
                 <Trash2 /> Löschen
             </button>

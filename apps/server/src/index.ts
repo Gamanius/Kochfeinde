@@ -3,10 +3,9 @@ import cors from 'cors';
 import { appRouter } from "./appRouter";
 
 export const createContext = async (opts: CreateHTTPContextOptions) => {
-    // Example: extract a session token from the request headers
     return {
       httpCtx: opts,
-      user: "admin"
+      userId: null as string | null,
     }
 };
 

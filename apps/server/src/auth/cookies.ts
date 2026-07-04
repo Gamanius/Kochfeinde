@@ -1,4 +1,5 @@
 import type { ServerResponse } from "http";
+import { verifyAccessToken } from "./tokens";
 
 const REFRESH_COOKIE_NAME = "kochfeinde_refresh";
 const ACCESS_COOKIE_NAME = "kochfeinde_access";
@@ -39,4 +40,14 @@ function getCookie(req: { headers: { cookie?: string } }, name: string): string 
         }
     }
     return null;
+}
+
+export function getUserId(req: { headers: { cookie?: string } }) : string {
+    const res = verifyAccessToken(getAccessToken(req) || "")?.sub
+
+    if (res === undefined) {
+        throw new Error("This function should only be called in a protectedRoute")
+    }
+
+    return res
 }
