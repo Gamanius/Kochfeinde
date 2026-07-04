@@ -21,8 +21,8 @@ COPY apps/kochfeinde/package*.json ./apps/kochfeinde/
 
 RUN npm ci --omit=dev
 
-COPY --from=builder /app/apps/kochfeinde/dist ./apps/kochfeinde/dist
+COPY --from=builder /app/apps/kochfeinde/.output ./apps/kochfeinde/.ouput
 
 WORKDIR /app/apps/kochfeinde
 
-CMD ["node", "dist/server/server.js"]
+CMD ["node", ".ouput/server/index.mjs"]

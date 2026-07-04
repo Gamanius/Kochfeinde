@@ -25,7 +25,8 @@
 		"JWT_ACCESS_SECRET": "secret-key",
 		"JWT_REFRESH_SECRET": "secret-key",
 		"REGISTER_CODE": "kochfeinde",
-		"DATABASE_URL": "postgres://postgres:postgres@db:5432/postgres"
+		"DATABASE_URL": "postgres://postgres:postgres@db:5432/postgres",
+		"BACKEND_PORT": "3001"
 	},
 	
 	// Use 'forwardPorts' to make a list of ports inside the container available locally.

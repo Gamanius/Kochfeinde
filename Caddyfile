@@ -1,4 +1,4 @@
-new.kochfeinde.com {
+dev.kochfeinde.com {
     handle /api/* {
         reverse_proxy server:3001
     }

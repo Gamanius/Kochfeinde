@@ -16,4 +16,4 @@ createHTTPServer({
   middleware: cors(),
   router: appRouter,
   createContext,
-}).listen(3000);
+}).listen(process.env.BACKEND_PORT!);
