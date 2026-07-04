@@ -27,10 +27,7 @@ export const authRouter = router({
         const user = await db.select().from(userTable).where(eq(userTable.name, sub.sub))
 
         if (user.length === 0) {
-            throw new TRPCError({
-                code: "NOT_FOUND",
-                message: "Nutzername oder Passwort falsch"
-            })
+            return null
         }
 
         return {

@@ -1,5 +1,6 @@
 FROM node:22 AS builder
 
+ENV NODE_ENV=production
 WORKDIR /app
 
 COPY package*.json ./
@@ -8,7 +9,6 @@ COPY apps/kochfeinde/package*.json ./apps/kochfeinde/
 RUN npm ci
 
 COPY . .
-
 RUN npm run build --workspace=apps/kochfeinde
 
 
@@ -21,8 +21,8 @@ COPY apps/kochfeinde/package*.json ./apps/kochfeinde/
 
 RUN npm ci --omit=dev
 
-COPY --from=builder /app/apps/kochfeinde/.output ./apps/kochfeinde/.ouput
+COPY --from=builder /app/apps/kochfeinde/.output ./apps/kochfeinde/.output
 
 WORKDIR /app/apps/kochfeinde
 
-CMD ["node", ".ouput/server/index.mjs"]
+CMD ["node", ".output/server/index.mjs"]
