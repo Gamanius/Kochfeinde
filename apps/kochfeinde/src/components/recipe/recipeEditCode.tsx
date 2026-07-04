@@ -1,11 +1,10 @@
-import { useCallback, useState } from 'react';
+import { useCallback } from 'react';
 import CodeMirror, { keymap, Prec } from '@uiw/react-codemirror';
 import { autocompletion } from "@codemirror/autocomplete";
 import type {CompletionResult, CompletionContext } from "@codemirror/autocomplete";
 import type { KeyBinding } from '@codemirror/view';
 import { markdown, markdownLanguage } from '@codemirror/lang-markdown';
 import markdownit from 'markdown-it'
-import DOMPurify from 'dompurify';
 import { useQueryClient } from "@tanstack/react-query";
 import { useTRPC } from "#/query/trcp";
 import { useDebouncedCallback } from "use-debounce";

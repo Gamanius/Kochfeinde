@@ -1,5 +1,5 @@
 import MarkdownIt from "markdown-it"
-import DOMPurify from 'dompurify';
+import DOMPurify from 'isomorphic-dompurify';
 
 function addCheckboxes(html: string): string {
     return html

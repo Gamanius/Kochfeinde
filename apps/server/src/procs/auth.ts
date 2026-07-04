@@ -9,7 +9,7 @@ import { generateAccessToken, generateRefreshToken, verifyRefreshToken } from ".
 import { clearCookies, getRefreshToken, getUserId, setCookies } from "../auth/cookies"
 
 
-const REGISTER_CODE = process.env.REGISTER_CODE ?? "kochfeinde";
+const REGISTER_CODE = process.env.REGISTER_CODE!;
 
 export const authRouter = router({
     get: publicProcedure.query(async (opt) => {

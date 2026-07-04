@@ -23,7 +23,7 @@ function RouteComponent() {
             })
         }
     }))
-    const {register, handleSubmit, formState: { errors },} = useForm({
+    const {register, handleSubmit } = useForm({
         resolver: zodResolver(LoginUserSchema),
     })
 

@@ -21,7 +21,6 @@ export const protectedProcedure = t.procedure.use(async function isAuthed(opts) 
     const accessToken = getAccessToken(ctx.httpCtx.req);
     if (accessToken) {
         const verified = verifyAccessToken(accessToken);
-        console.log("Access ", accessToken)
         if (verified) {
             return opts.next();
         }
@@ -34,7 +33,6 @@ export const protectedProcedure = t.procedure.use(async function isAuthed(opts) 
         if (refreshVerified) {
             // Refresh is still valid — issue new tokens and proceed
             const userId = refreshVerified.sub;
-            console.log("Refresh ", refreshToken)
 
             setCookies(ctx.httpCtx.res, generateAccessToken(userId), generateRefreshToken(userId))
             return opts.next();
