@@ -4,9 +4,8 @@ import { appRouter } from "./appRouter";
 
 export const createContext = async (opts: CreateHTTPContextOptions) => {
     // Example: extract a session token from the request headers
-    
     return {
-      req: opts,
+      httpCtx: opts,
       user: "admin"
     }
 };

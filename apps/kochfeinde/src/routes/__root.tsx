@@ -67,6 +67,12 @@ function RootDocument({ children }: { children: React.ReactNode }) {
     links: [
       httpBatchLink({
         url: 'http://localhost:8000/api',
+        fetch(url, options) {
+            return fetch(url, {
+            ...options,
+            credentials: 'include',
+            });
+        },
       }),
     ],
   });

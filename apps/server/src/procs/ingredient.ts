@@ -21,7 +21,6 @@ export const ingredientRouter = router({
         const res = await db.select().from(ingredientTable)
             .where(eq(ingredientTable.slug, opt.input.slug))
 
-        console.log(res)
         if (res.length === 0) {
             throw new TRPCError({
                 code: "NOT_FOUND"

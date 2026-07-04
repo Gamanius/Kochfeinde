@@ -1,6 +1,11 @@
 import { defineRelations, isNull, sql } from "drizzle-orm";
 import { char, integer, pgEnum, pgTable, primaryKey, real, text, uuid, varchar } from "drizzle-orm/pg-core";
 
+export const userTable = pgTable("user", {
+    name: text().unique().notNull(),
+    passwordHash: text().notNull()
+})
+
 export const unit = pgEnum("unit", [
     "LITER",
     "GRAMM",

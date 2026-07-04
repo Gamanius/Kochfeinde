@@ -122,11 +122,11 @@ hr {
     }
 
     li:has(input) span {
-    background-image: linear-gradient(var(--color-primary), var(--color-primary));
-    background-size: 0 2px;
-    background-repeat: no-repeat;
-    background-position: 0 50%;
-    transition: background-size 0.45s ease;
+        background-image: linear-gradient(var(--color-primary), var(--color-primary));
+        background-size: 0 2px;
+        background-repeat: no-repeat;
+        background-position: 0 50%;
+        transition: background-size 0.45s ease;
     }
 
     li:has(input:checked) span {
@@ -136,7 +136,7 @@ hr {
     ul {
         display: flex;
         flex-direction: column;
-        gap: calc(var(--spacing) * 1);
+        gap: calc(var(--spacing) * 2);
     }
 
     li {

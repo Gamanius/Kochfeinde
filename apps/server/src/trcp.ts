@@ -4,6 +4,8 @@
  */
 import { initTRPC, TRPCError } from '@trpc/server';
 import type {Context} from "./index"
+import { getAccessToken, getRefreshToken,  setCookies,  } from './auth/cookies';
+import { generateAccessToken, generateRefreshToken, verifyAccessToken, verifyRefreshToken } from './auth/tokens';
 
 const t = initTRPC.context<Context>().create();
 
@@ -13,15 +15,32 @@ export const publicProcedure = t.procedure.use(async (opts) => {
 });
 
 export const protectedProcedure = t.procedure.use(async function isAuthed(opts) {
-    const {ctx} = opts;
+    const { ctx } = opts;
 
-    if (ctx.user === null) {
-        throw new TRPCError({
-            code: "UNAUTHORIZED"
-        })
+    // 1. Try access token first
+    const accessToken = getAccessToken(ctx.httpCtx.req);
+    if (accessToken) {
+        const verified = verifyAccessToken(accessToken);
+        console.log("Access ", accessToken)
+        if (verified) {
+            return opts.next();
+        }
     }
 
-    return opts.next({
-        
-    })
+    // 2. Access token expired or missing — try refresh token
+    const refreshToken = getRefreshToken(ctx.httpCtx.req);
+    if (refreshToken) {
+        const refreshVerified = verifyRefreshToken(refreshToken);
+        if (refreshVerified) {
+            // Refresh is still valid — issue new tokens and proceed
+            const userId = refreshVerified.sub;
+            console.log("Refresh ", refreshToken)
+
+            setCookies(ctx.httpCtx.res, generateAccessToken(userId), generateRefreshToken(userId))
+            return opts.next();
+        }
+    }
+
+    // 3. Nothing works — real UNAUTHORIZED
+    throw new TRPCError({ code: "UNAUTHORIZED" });
 })
