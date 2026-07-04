@@ -1,5 +1,4 @@
-import { LoginUserSchema } from "@kochfeinde/shared";
-import { publicProcedure, router } from "./trcp";
+import { router } from "./trcp";
 import { recipeRouter } from "./procs/recipe";
 import { ingredientRouter } from "./procs/ingredient";
 import { authRouter } from "./procs/auth";
