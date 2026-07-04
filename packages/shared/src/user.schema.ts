@@ -11,7 +11,7 @@ export type LoginUserType =  z.infer<typeof LoginUserSchema>;
 
 export const RegisterUserSchema = z.object({
     name: z.string().min(3),
-    displayname: z.string().min(3),
+    displayname: z.string().min(3).max(12),
     password: z.string().min(4),
     register_code: z.string()
 })
@@ -29,6 +29,6 @@ export const ChangePasswordSchema = z.object({
 export type ChangePasswordType = z.infer<typeof ChangePasswordSchema>;
 
 export const ChangeDisplayNameSchema = z.object({
-    name: z.string().min(3)
+    name: z.string().min(3).max(12)
 })
 export type ChangeDisplayNameType = z.infer<typeof ChangeDisplayNameSchema>;

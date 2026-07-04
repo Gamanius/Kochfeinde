@@ -1,6 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import Logo from "./Logo"
-import { Sun, Moon, Monitor, User, UserCog, LogOut, LogIn } from 'lucide-react';
+import { Sun, Moon, Monitor, User, UserCog, LogOut, LogIn, SunMoon, SunIcon, MonitorCog } from 'lucide-react';
 import { useTRPC } from "#/query/trcp";
 import { useMutation, useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
 
@@ -25,7 +25,11 @@ export default function Header() {
                 </Link>
             </span>
 
-            <span className="justify-self-end">
+            <span className="flex w-full justify-end">
+                <button className="btn btn-ghost btn-square mr-2" popoverTarget="theme-selector" style={{anchorName: "--theme-selector"}}>
+                    <SunMoon />
+                </button>
+
                 {user === null ? <>
                 <div className="hover:aura hover:aura-rainbow p-0.5">
                     <Link to="/login" className="btn btn-ghost btn-square bg-base-100">
@@ -38,6 +42,34 @@ export default function Header() {
                     </button>
                 </>}
             </span>
+
+            <ul className="dropdown dropdown-end menu w-40 rounded-box bg-base-100 shadow-sm" 
+            popover="auto" id="theme-selector" style={{ positionAnchor: "--theme-selector" } /* as React.CSSProperties */ }>
+                <style>{`
+                .theme-option:has(.theme-controller:checked) {
+                    background-color: var(--color-primary);
+                    color: var(--color-primary-content);
+                }
+                `}</style>
+                <li>
+                <label className="theme-option btn btn-sm btn-block btn-ghost justify-start">
+                    <input type="radio" name="theme-dropdown" className="theme-controller hidden" aria-label="Default" value="default" />
+                    <MonitorCog size={16} /> Default
+                </label>
+                </li>
+                <li>
+                <label className="theme-option btn btn-sm btn-block btn-ghost justify-start">
+                    <input type="radio" name="theme-dropdown" className="theme-controller hidden" aria-label="Light" value="light" />
+                    <Sun size={16} /> Light
+                </label>
+                </li>
+                <li>
+                <label className="theme-option btn btn-sm btn-block btn-ghost justify-start">
+                    <input type="radio" name="theme-dropdown" className="theme-controller hidden" aria-label="Dark" value="dark" />
+                    <Moon size={16} /> Dark
+                </label>
+                </li>
+            </ul>
 
             <ul className="dropdown menu w-52 rounded-box bg-base-100 shadow-sm"
             popover="auto" id="header-user" style={{ positionAnchor: "--header-user" } /* as React.CSSProperties */ }>
