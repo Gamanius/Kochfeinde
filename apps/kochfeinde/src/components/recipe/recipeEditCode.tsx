@@ -95,11 +95,11 @@ export default function RecipeEditCode({
 
     return (
         <div className='grid grid-cols-1 sm:grid-cols-2 gap-2'>
-            <div>
+            <div className='sm:sticky sm:top-0 sm:self-start'>
             <CodeMirror
                 value={value}
                 theme={"dark"}
-                className='max-h-100 sm:max-h-none overflow-scroll sm:sticky sm:top-0 sm:self-start'
+                className='max-h-100 sm:max-h-none overflow-scroll '
                 onChange={handleChange}
                 extensions={[
                     autocompletion({ override: [completionSource] }),
