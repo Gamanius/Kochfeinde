@@ -33,7 +33,7 @@ export const RecipeSchema = z.object({
 export type RecipeType = z.infer<typeof RecipeSchema>;
 
 export const QueryRecipeSchema = z.object({
-    slug: z.string().lowercase()
+    slug: z.string()
 })
 
 export const InsertRecipeSchema = z.object({
