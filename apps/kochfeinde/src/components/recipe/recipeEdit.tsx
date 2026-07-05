@@ -2,8 +2,9 @@ import { useTRPC } from "#/query/trcp";
 import { useMutation, useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
 import Card from '#/components/card';
 import RecipeEditCode from './recipeEditCode';
+import TagSelector from './tagSelector';
 import { zodResolver } from "@hookform/resolvers/zod";
-import { parseIngredient, PatchRecipeSchema  } from "@kochfeinde/shared";
+import { PatchRecipeSchema  } from "@kochfeinde/shared";
 import type {PatchRecipeSchemaType} from "@kochfeinde/shared";
 import { useForm } from "react-hook-form";
 import { useRouter } from "@tanstack/react-router";
@@ -34,7 +35,10 @@ export default function RecipeEdit({slug}:{slug:string}) {
             markdown: res.data.markdown,
             active_time: res.data.active_time,
             total_time: res.data.total_time,
-            undertitle: res.data.undertitle
+            undertitle: res.data.undertitle,
+            portion_num: res.data.portion_num,
+            portion_string: res.data.portion_string,
+            tags: res.data.tags
         }
     })
 
@@ -45,6 +49,8 @@ export default function RecipeEdit({slug}:{slug:string}) {
     }
 
     const editstate = watch("markdown");
+
+    console.log(errors)
 
 
     return <>
@@ -60,7 +66,7 @@ export default function RecipeEdit({slug}:{slug:string}) {
                   {errors.name ? (
                     <p className="label text-error">{errors.name.message}</p>
                 ) : (
-                    <p className="label">
+                    <p className="label whitespace-normal">
                     Es können nicht zwei Zutaten mit dem selben Namen existieren.
                     </p>
                 )}
@@ -71,28 +77,48 @@ export default function RecipeEdit({slug}:{slug:string}) {
                     <input type="text" className="input w-full" {...register("undertitle")}></input>
                 </label>
 
-                <div className="grid grid-cols-2 gap-2">
+                <div className="grid sm:grid-cols-2  gap-2">
                     <label className="floating-label">
                         <span className="label-text">Zeit Aktiv (min)</span>
                         <input type="number" step="1"
-                            className="input"
+                            className="input w-full"
                             {...register("active_time", {valueAsNumber: true})}
                         />
                     </label>
 
-                <label className="floating-label">
-                    <span className="label-text">Zeit Total (min)</span>
-                    <input type="number" step="1"
-                        className="input"
-                        {...register("total_time", {valueAsNumber: true})}
-                    />
+                    <label className="floating-label">
+                        <span className="label-text">Zeit Total (min)</span>
+                        <input type="number" step="1"
+                            className="input w-full"
+                            {...register("total_time", {valueAsNumber: true})}
+                        />
+                    </label>
+                </div>
 
-                </label>
+                <div className="grid sm:grid-cols-2 gap-2">
+                    <label className="floating-label">
+                        <span className="label-text">Portion Menge</span>
+                        <input type="number" step="1"
+                            className="input w-full"
+                            {...register("portion_num", {valueAsNumber: true})}
+                        />
+                    </label>
+
+                    <label className="floating-label">
+                        <span className="label-text">Portion Kommentar</span>
+                        <input className="input w-full"
+                            {...register("portion_string")}
+                        />
+                    </label>
                 </div>
 
 
             </fieldset>
 
+            <TagSelector
+              selected={watch("tags") ?? []}
+              onChange={(tags) => setValue("tags", tags, { shouldDirty: true })}
+            />
 
             <RecipeEditCode value={editstate} onChange={(val) => setValue("markdown", val, { shouldDirty: true })} />
             <p className="text-error">

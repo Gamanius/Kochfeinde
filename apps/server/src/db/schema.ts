@@ -1,3 +1,4 @@
+import { recipeTags } from "@kochfeinde/shared";
 import { defineRelations, sql } from "drizzle-orm";
 import { date, integer, pgEnum, pgTable, primaryKey, real, text, uuid } from "drizzle-orm/pg-core";
 
@@ -14,6 +15,8 @@ export const unit = pgEnum("unit", [
     "GRAMM",
     "PIECE"
 ])
+
+export const tags = pgEnum("recipe_tags", recipeTags)
 
 export const ingredientTable = pgTable('ingredient', {
     id: uuid().primaryKey().default(sql`uuidv7()`),
@@ -58,6 +61,11 @@ export const recipeTable = pgTable('recipe', {
 
     time_active: integer().default(30).notNull(),
     time_total: integer().default(30).notNull(),
+
+    portion_num: integer().default(4),
+    portion_string: text().default("Personen"),
+
+    tags: tags().array(),
 
     fileUrl: text(),
 

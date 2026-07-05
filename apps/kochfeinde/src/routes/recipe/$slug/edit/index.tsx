@@ -5,6 +5,7 @@ import RecipeDelete from '#/components/recipe/recipeDelete';
 
 export const Route = createFileRoute('/recipe/$slug/edit/')({
     component: RouteComponent,
+    ssr: false
 })
 
 function RouteComponent() {

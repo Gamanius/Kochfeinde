@@ -7,8 +7,16 @@ function addCheckboxes(html: string): string {
     .replace(/<li>\s*/g, '<li><input type="checkbox"> ')
 }
 
-export function renderRecipe(input: string) : string {
+function scaleNumbers(md: string, scale: number) : string {
+    return md.replace(/(\d+[.,]\d+|\d+)(?!\d*[.,]\d*!|\d*!)/gm, e => {
+        return `${String(parseFloat(e.replace(",", ".")) * scale)}`
+    }).replace(/(\d+[.,]\d+|\d+)!/gm, e => {
+        return e.slice(0, -1)
+    })
+}
+
+export function renderRecipe(input: string, scale: number = 1 ) : string {
     const md = MarkdownIt();
 
-    return addCheckboxes(sanitizeHtml(md.render(input)))
+    return addCheckboxes(sanitizeHtml(md.render(scaleNumbers(input, scale))))
 }

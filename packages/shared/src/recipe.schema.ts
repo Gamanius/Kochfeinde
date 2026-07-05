@@ -1,4 +1,8 @@
 import { z } from "zod";
+import { recipeTags } from "./recipe";
+
+export const RecipeTagSchema = z.enum(recipeTags);
+export type RecipeTagType = z.infer<typeof RecipeTagSchema>;
 
 export const RecipeListSchema = z.array(z.object({
     name: z.string(),
@@ -6,6 +10,7 @@ export const RecipeListSchema = z.array(z.object({
     total_time: z.int(),
     undertitle: z.string().nullable(),
     author: z.string(),
+    tags: z.array(RecipeTagSchema).nullable(),
 }))
 export type RecipeListType = z.infer<typeof RecipeListSchema>;
 
@@ -19,6 +24,11 @@ export const RecipeSchema = z.object({
 
     markdown: z.string(),
     author: z.string(),
+
+    portion_num: z.number(),
+    portion_string: z.string(),
+
+    tags: z.array(RecipeTagSchema).nullable(),
 })
 export type RecipeType = z.infer<typeof RecipeSchema>;
 
@@ -38,7 +48,12 @@ export const PatchRecipeSchema = z.object({
 
     total_time: z.int(),
     active_time: z.int(),
-    undertitle: z.string().nullable()
+    undertitle: z.string().nullable(),
+
+    portion_num: z.number(),
+    portion_string: z.string(),
+
+    tags: z.array(RecipeTagSchema).nullable(),
 })
 export type PatchRecipeSchemaType = z.infer<typeof PatchRecipeSchema>
 

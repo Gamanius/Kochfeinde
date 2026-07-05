@@ -1,6 +1,6 @@
 export default function Logo() {
     return (
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -0.5 32 32" shape-rendering="crispEdges" className="size-6">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -0.5 32 32" shapeRendering="crispEdges" className="size-6">
             <path stroke="#000000" d="M6 2h4M23 2h2M9 3h3M20 3h4M11 4h2M18 4h3M12 5h2M17 5h2M13 6h1M16 6h2M16 7h1M12 10h1M15 10h1M12 11h1M15 11h1" />
             <path stroke="#9f4325" d="M10 6h3M9 7h2M8 8h2M7 9h2M7 10h2M6 11h2M5 12h2M5 13h2M4 14h2M4 15h2M4 16h2M4 17h2M4 18h2M4 19h2M4 20h2M4 21h2M4 22h2M4 23h2M5 24h2M6 25h2M6 26h2M7 27h1M7 28h4" />
             <path stroke="#916035" d="M11 7h5M10 8h7M9 9h9M9 10h3M13 10h2M16 10h2M8 11h4M13 11h2M16 11h2M7 12h11M8 13h10M6 14h2M10 14h7M6 15h2M12 15h4M17 15h2M6 16h1M9 16h3M16 16h1M6 17h1M8 17h11M9 18h10M7 19h2M11 19h6M7 20h4M17 20h2M8 21h8M18 21h1M7 22h1M11 22h6M6 23h2M10 23h7M7 24h1M9 24h1M17 24h1M9 25h9M9 26h2M12 26h3M16 26h1M9 27h2M13 27h2" />

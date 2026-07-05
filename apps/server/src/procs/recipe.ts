@@ -19,7 +19,8 @@ export const recipeRouter = router({
                 slug: r.recipe.slug,
                 author: r.user.displayName,
                 total_time: r.recipe.time_total,
-                undertitle: r.recipe.undertitle
+                undertitle: r.recipe.undertitle,
+                tags: r.recipe.tags
             }
         ))
 
@@ -45,7 +46,10 @@ export const recipeRouter = router({
             author: recipe.user.displayName,
             active_time: recipe.recipe.time_active,
             total_time: recipe.recipe.time_total,
-            undertitle: recipe.recipe.undertitle
+            undertitle: recipe.recipe.undertitle,
+            tags: recipe.recipe.tags,
+            portion_num: recipe.recipe.portion_num || 4,
+            portion_string: recipe.recipe.portion_string || "Personen"
         }
     }),
     insert: protectedProcedure.input(InsertRecipeSchema).mutation(async (opt) => {
@@ -85,7 +89,10 @@ export const recipeRouter = router({
             name: opt.input.name,
             time_active: opt.input.active_time,
             time_total: opt.input.total_time,
-            undertitle: opt.input.undertitle
+            undertitle: opt.input.undertitle,
+            tags: opt.input.tags,
+            portion_num: opt.input.portion_num,
+            portion_string: opt.input.portion_string
         })
         .where(eq(recipeTable.slug, opt.input.slug))
         .returning({
@@ -103,10 +110,23 @@ export const recipeRouter = router({
 
         const ingredients = parseIngredient(opt.input.markdown)
 
+        // Get unique ingredient slugs to avoid duplicates in DB query
+        const uniqueSlugs = [...new Set(ingredients.map(i => i.ingredient_slug))]
+
         await db.delete(ingredientToRecipe).where(eq(ingredientToRecipe.recipeId, recipe.id))
         const all_ings = await db.select()
             .from(ingredientTable)
-            .where(inArray(ingredientTable.slug, ingredients.map(i => i.ingredient_slug)))
+            .where(inArray(ingredientTable.slug, uniqueSlugs))
+
+        // Check that every ingredient exists in the database
+        if (uniqueSlugs.length !== all_ings.length) {
+            const foundSlugs = new Set(all_ings.map(i => i.slug))
+            const missingSlugs = uniqueSlugs.filter(s => !foundSlugs.has(s))
+            throw new TRPCError({
+                code: "NOT_FOUND",
+                message: `Diese Zutaten existieren nicht in der Datenbank: ${missingSlugs.join(", ")}`
+            })
+        }
 
         const slugToId = Object.fromEntries(all_ings.map(i => [i.slug, i.id]))
 

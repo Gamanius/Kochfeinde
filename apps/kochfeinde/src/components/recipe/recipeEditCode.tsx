@@ -4,7 +4,6 @@ import { autocompletion } from "@codemirror/autocomplete";
 import type {CompletionResult, CompletionContext } from "@codemirror/autocomplete";
 import type { KeyBinding } from '@codemirror/view';
 import { markdown, markdownLanguage } from '@codemirror/lang-markdown';
-import markdownit from 'markdown-it'
 import { useQueryClient } from "@tanstack/react-query";
 import { useTRPC } from "#/query/trcp";
 import { useDebouncedCallback } from "use-debounce";
@@ -61,7 +60,6 @@ export default function RecipeEditCode({
 }) {
     const trpc = useTRPC();
     const query = useQueryClient();
-    const md = markdownit();
 
     const debouncedFetch = useDebouncedCallback(
         () => query.fetchQuery(trpc.ingredient.list.queryOptions()),
@@ -96,11 +94,12 @@ export default function RecipeEditCode({
     }, [onChange]);
 
     return (
-        <div className='grid grid-cols-2 gap-2'>
+        <div className='grid grid-cols-1 sm:grid-cols-2 gap-2'>
             <div>
             <CodeMirror
                 value={value}
                 theme={"dark"}
+                className='max-h-100 sm:max-h-none overflow-scroll sm:sticky sm:top-0 sm:self-start'
                 onChange={handleChange}
                 extensions={[
                     autocompletion({ override: [completionSource] }),
@@ -124,7 +123,7 @@ export default function RecipeEditCode({
             </div>
 
             <article
-                className='recipe-content border-l border-neutral pl-4'
+                className='recipe-content sm:border-l border-neutral pl-4 sm:sticky sm:top-0 sm:self-start'
                 dangerouslySetInnerHTML={{ __html: renderRecipe(value) }}
             />
         </div>
