@@ -26,6 +26,7 @@ export default function RecipeDelete({slug}:{slug:string}) {
             setError("name", {type: "pattern", message: "Der Name muss übereinstimmen!"}, {
                 shouldFocus: true
             })
+            return;
         }
         mut.mutate({
             slug: slug

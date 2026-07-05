@@ -6,6 +6,7 @@ import { createTRPCClient, httpBatchLink } from '@trpc/client'
 import type { AppRouter } from '@kochfeinde/server'
 import { TRPCProvider } from '#/query/trcp'
 import Header from '#/components/header'
+import { Suspense } from 'react'
 
 function makeQueryClient() {
   return new QueryClient({
@@ -92,7 +93,9 @@ function RootDocument({ children }: { children: React.ReactNode }) {
         <HeadContent />
       </head>
       <body>
-        <Header></Header>
+        <Suspense>
+          <Header></Header>
+        </Suspense>
         <main className="grid grid-cols-1 items-center align-middle">
             <div className='max-w-7xl w-full justify-self-center'>
                 {children}

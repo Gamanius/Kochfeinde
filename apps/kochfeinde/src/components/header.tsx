@@ -1,6 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import Logo from "./Logo"
-import { Sun, Moon, Monitor, User, UserCog, LogOut, LogIn, SunMoon, SunIcon, MonitorCog } from 'lucide-react';
+import { Sun, Moon, User, UserCog, LogOut, LogIn, SunMoon, MonitorCog } from 'lucide-react';
 import { useTRPC } from "#/query/trcp";
 import { useMutation, useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
 

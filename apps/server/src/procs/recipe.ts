@@ -5,6 +5,7 @@ import {ingredientTable, ingredientToRecipe, recipeTable, userTable} from "../db
 import { TRPCError } from "@trpc/server";
 import { eq, inArray } from "drizzle-orm";
 import { getUserId } from "../auth/cookies";
+import slugify from "slugify";
 
 
 export const recipeRouter = router({
@@ -65,7 +66,7 @@ export const recipeRouter = router({
 
         const res = await db.insert(recipeTable).values({
             name: opt.input.name,
-            slug: opt.input.name.toLowerCase().replaceAll(" ", "_"),
+            slug: slugify(opt.input.name),
             userId: user[0].id
         }).returning({
             id: recipeTable.id,

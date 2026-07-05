@@ -37,13 +37,13 @@ export const QueryRecipeSchema = z.object({
 })
 
 export const InsertRecipeSchema = z.object({
-    name: z.string().min(3, {error: "Beep Beep you will be deleted"})
+    name: z.string().min(3)
 })
 export type InsertRecipeSchemaType = z.infer<typeof InsertRecipeSchema>
 
 export const PatchRecipeSchema = z.object({
     slug: z.string(),
-    name: z.string().min(3, {error: "Beep Beep you will be deleted"}),
+    name: z.string().min(3),
     markdown: z.string(),
 
     total_time: z.int(),

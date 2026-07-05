@@ -1,7 +1,7 @@
 import Card from '#/components/card'
 import { useTRPC } from '#/query/trcp'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { InsertRecipeSchema, LoginUserSchema  } from '@kochfeinde/shared'
+import { LoginUserSchema  } from '@kochfeinde/shared'
 import type {LoginUserType} from '@kochfeinde/shared';
 import { useQueryClient, useMutation } from '@tanstack/react-query'
 import { createFileRoute, Link, useRouter } from '@tanstack/react-router'
@@ -16,7 +16,7 @@ function RouteComponent() {
     const query = useQueryClient()
     const router = useRouter()
     const mut = useMutation(trpc.auth.login.mutationOptions({
-        onSuccess: (opt) => {
+        onSuccess: () => {
             query.invalidateQueries(trpc.auth.get.queryOptions())
             router.navigate({
                 to: "/"

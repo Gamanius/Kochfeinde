@@ -1,8 +1,8 @@
 import Card from '#/components/card'
 import { useTRPC } from '#/query/trcp'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { InsertRecipeSchema, LoginUserSchema, RegisterUserSchema  } from '@kochfeinde/shared'
-import type {LoginUserType, RegisterUserType} from '@kochfeinde/shared';
+import { RegisterUserSchema  } from '@kochfeinde/shared'
+import type {RegisterUserType} from '@kochfeinde/shared';
 import { useQueryClient, useMutation } from '@tanstack/react-query'
 import { createFileRoute, useRouter } from '@tanstack/react-router'
 import { useForm } from 'react-hook-form'
@@ -16,7 +16,8 @@ function RouteComponent() {
     const query = useQueryClient()
     const router = useRouter()
     const mut = useMutation(trpc.auth.register.mutationOptions({
-        onSuccess: (opt) => {
+        onSuccess: () => {
+            query.invalidateQueries(trpc.auth.get.queryOptions());
             router.navigate({to: "/"})
         }
     }))
@@ -37,21 +38,25 @@ function RouteComponent() {
                 <label className='floating-label'>
                     <span>Anmelde Name</span>
                     <input type="text" className="input" {...register("name")}/>
+                    <p className='text-error'>{errors.name?.message}</p>
                 </label>
                 <span className='label -mt-2 whitespace-normal'> Der Name wird verwendet zum anmelden und kann nicht geändert werden </span>
                 <label className='floating-label'>
                     <span>Anzeige Name</span>
                     <input type="text" className="input" {...register("displayname")}/>
+                    <p className='text-error'>{errors.displayname?.message}</p>
                 </label>
                 <span className='label -mt-2 whitespace-normal'> Der Name wird angezeigt und kann später geändert werden </span>
 
                 <label className='floating-label'>
                     <span>Passwort</span>
                     <input type="password" className="input" {...register("password")}/>
+                    <p className='text-error'>{errors.password?.message}</p>
                 </label>
                 <label className='floating-label'>
                     <span>Registrierungs Code</span>
                     <input type='text' className='input' {...register("register_code")}/>
+                    <p className='text-error'>{errors.register_code?.message}</p>
                 </label>
                 <p className='text-error'>
                     {mut.error?.message}
