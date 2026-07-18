@@ -1,4 +1,5 @@
 import { create } from 'zustand'
+import { persist } from 'zustand/middleware'
 
 export type RecipeListItem = {
     amount: number,
@@ -13,7 +14,7 @@ interface RecipeListState {
     clearList: () => void,
 }
 
-export const useRecipeListStore = create<RecipeListState>()((set) => ({
+export const useRecipeListStore = create<RecipeListState>()(persist((set) => ({
     list: {},
     addRecipe: (slug, name, amount = 1) => set((state) => {
         if (slug in state.list) return state;
@@ -43,4 +44,4 @@ export const useRecipeListStore = create<RecipeListState>()((set) => ({
         };
     }),
     clearList: () => set({ list: {} }),
-}))
+}), {name: "shopping-list"}))

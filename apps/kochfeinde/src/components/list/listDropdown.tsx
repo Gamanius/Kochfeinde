@@ -1,4 +1,4 @@
-import { Minus, Plus, ShoppingCart, Trash } from "lucide-react";
+import { Minus, Plus, ScrollText, ShoppingCart, Trash } from "lucide-react";
 import { useRecipeListStore } from "./listContext"
 import { Link } from "@tanstack/react-router";
 
@@ -21,6 +21,9 @@ export default function ListDropdown() {
     const clearList = useRecipeListStore(s => s.clearList);
     const entries = Object.entries(list);
 
+
+    const restoredR = localStorage.getItem('kochfeinde_shopping_r')
+
     const slugs = entries.map((e) => `${e[0]}:${e[1].amount}`).join(",");
 
 
@@ -36,23 +39,33 @@ export default function ListDropdown() {
                         </button>
                     </li>
                 ))}
+
                 {entries.length > 0 ? (
-                    <li className="divider my-1" />
-                ) : null}
-                {entries.length > 0 ? (
+                    <>
                     <li>
-                        <Link to="/shopping-list" search={{ r: slugs, m: '' }} className="btn btn-ghost w-full" onClick={e => {
+                        <Link to="/shopping-list" search={{ r: slugs, m: '0' }} className="btn btn-ghost w-full" onClick={e => {
                             (e.currentTarget.closest("[popover]") as HTMLElement).hidePopover();
                         }}>
                             <ShoppingCart /> Einkaufsliste Erstellen
                         </Link>
                     </li>
+                    <li>
+                        <button className="btn btn-ghost btn-xs w-full text-error" onClick={clearList}>
+                            Liste leeren
+                        </button>
+                    </li>
+                    <div className="divider my-1"></div>
+                    </>
+                    
                 ) : null}
-                <li>
-                    <button className="btn btn-ghost btn-xs w-full text-error" onClick={clearList}>
-                        Liste leeren
-                    </button>
-                </li>
+                {restoredR === null ||
+                    <li>
+                        <Link to="/shopping-list" search={{r: "", m: ""}} className="btn btn-ghost w-full">
+                            <ScrollText/> Letzte Liste öffnen
+                        </Link>
+                    </li>
+                }
+
         </ul>
     );
 }

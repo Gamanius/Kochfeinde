@@ -1,7 +1,7 @@
 import { useTRPC } from "#/query/trcp"
 import { useSuspenseQuery } from "@tanstack/react-query"
 import { Link } from "@tanstack/react-router"
-import {CircleUserRound, Lock, Minus, Plus, Quote, SquarePen, Timer, Zap} from "lucide-react"
+import {ChevronLeft, CircleUserRound, Lock, Minus, Plus, Quote, SquarePen, Timer, Zap} from "lucide-react"
 import { renderRecipe } from "./recipeParser"
 import { tagLabelMap } from "@kochfeinde/shared"
 import { useState } from "react"
@@ -32,6 +32,7 @@ export default function RecipeSite({slug}:{slug:string}) {
 
     return <article className="flex justify-center min-w-full">
         <div className="mx-4  p-10 max-w-4xl w-full shadow-2xl ">
+            <Link to="/recipe" className="text-sm text-neutral hover:text-primary underline flex items-center"><ChevronLeft className="size-4"/> Rezepte</Link>
             <div className="flex justify-between items-end">
                 <h1 className="">
                     {res.data.name}

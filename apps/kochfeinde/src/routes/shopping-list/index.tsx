@@ -49,8 +49,28 @@ const UNIT_LABELS: Record<string, string> = {
 }
 
 function RouteComponent() {
-    const { r, m } = Route.useSearch()
+    const { r: urlR, m: urlM } = Route.useSearch()
     const navigate = useNavigate()
+
+    // Restore from localStorage when URL has no params
+    const restoredR = !urlR ? localStorage.getItem('kochfeinde_shopping_r') || '' : ''
+    const restoredM = !urlM ? localStorage.getItem('kochfeinde_shopping_m') || '' : ''
+
+    const r = urlR || restoredR
+    const m = urlM || restoredM
+
+    // Redirect to restored URL on first render if needed
+    useEffect(() => {
+        if (restoredR) {
+            navigate({
+                to: '/shopping-list',
+                search: { r: restoredR, m: restoredM },
+                replace: true,
+                resetScroll: false,
+            })
+        }
+    }, [])
+
     const slugEntries = r ? r.split(',').filter(Boolean).map(part => {
         const [slug, amountStr] = part.split(':')
         return { slug, amount: amountStr ? parseInt(amountStr, 10) : 4 }
@@ -89,6 +109,7 @@ function RouteComponent() {
             to: '/shopping-list',
             search: { r: r || '', m: newM || '' },
             replace: true,
+            resetScroll: false,
         })
     }
 
