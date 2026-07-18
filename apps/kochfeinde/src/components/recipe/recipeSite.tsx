@@ -5,6 +5,7 @@ import {CircleUserRound, Lock, Minus, Plus, Quote, SquarePen, Timer, Zap} from "
 import { renderRecipe } from "./recipeParser"
 import { tagLabelMap } from "@kochfeinde/shared"
 import { useState } from "react"
+import AddToListButton from "../list/addToListButton"
 
 
 function changeVal(num: string, val : number) : string {
@@ -31,10 +32,14 @@ export default function RecipeSite({slug}:{slug:string}) {
 
     return <article className="flex justify-center min-w-full">
         <div className="mx-4  p-10 max-w-4xl w-full shadow-2xl ">
-            <div className="flex justify-between border-b pb-2 items-end">
+            <div className="flex justify-between items-end">
                 <h1 className="">
                     {res.data.name}
                 </h1> 
+                <span className="flex flex-wrap justify-end gap-2">
+
+                <AddToListButton slug={slug} name={res.data.name} portionNum={res.data.portion_num} small={false} />
+                
                 {user.data === null ? 
                 <div className="tooltip tooltip-left tooltip-error" data-tip="Logge dich ein um zu bearbeiten"> 
                 <button className="btn btn-square btn-disabled">
@@ -44,7 +49,10 @@ export default function RecipeSite({slug}:{slug:string}) {
                     <SquarePen />
                 </Link>
                 }
+                </span>
+
             </div>
+            <div className="divider my-0"></div>
             {res.data.undertitle === null ? <></>: 
             <span className="inline-flex items-center gap-1 mt-1"><Quote /> <i>{res.data.undertitle}</i></span>
             }
@@ -80,6 +88,9 @@ export default function RecipeSite({slug}:{slug:string}) {
                         <button className="btn btn-square join-item" onClick={() => setPortionNum(e => changeVal(e, 1))}> <Plus/> </button>
                     </div>
                      {res.data.portion_string}</span>
+            </div>
+            <div className="divider my-0">
+
             </div>
             <div className="recipe-content text-justify" dangerouslySetInnerHTML={{
                 __html: renderRecipe(res.data.markdown, parseFloat(portionNum)/res.data.portion_num)

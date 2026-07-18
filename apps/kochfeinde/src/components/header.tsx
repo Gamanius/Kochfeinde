@@ -34,12 +34,14 @@ export default function Header() {
                     <SunMoon />
                 </button>
 
+                {amount === 0 ||
                 <div className="indicator mr-2">
                     <span className="indicator-item badge badge-sm mr-1 mt-1 badge-primary">{amount}</span>
                     <button className="btn btn-square btn-ghost" popoverTarget="recipe-list" style={{anchorName: "--recipe-list"}}>
                         <List></List>
                     </button>
                 </div>
+                }
 
                 {user.data === null || user.data === undefined ? <>
                 <div className="hover:aura hover:aura-rainbow p-0.5">
@@ -50,8 +52,8 @@ export default function Header() {
                     }
                 </div>
                 </> : <>
-                    <button className="btn" popoverTarget="header-user" style={{ anchorName: "--header-user" } /* as React.CSSProperties */}>
-                        <User/> {user.data.displayname}
+                    <button className="btn btn-ghost sm:btn" popoverTarget="header-user" style={{ anchorName: "--header-user" } /* as React.CSSProperties */}>
+                        <User/> <span className="hidden sm:inline">{user.data.displayname}</span>
                     </button>
                 </>}
             </span>
@@ -89,8 +91,11 @@ export default function Header() {
                 <li><Link to="/profile"> <UserCog/> Einstellungen</Link></li>
                 <li><button onClick={() => mut.mutate()}> <LogOut/> Ausloggen</button></li>
             </ul>
-
-            <ListDropdown/>
+            
+            {
+                amount === 0 ||
+                <ListDropdown/>
+            }
         </header>
     </>
 }

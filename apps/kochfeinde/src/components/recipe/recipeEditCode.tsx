@@ -9,6 +9,7 @@ import { useTRPC } from "#/query/trcp";
 import { useDebouncedCallback } from "use-debounce";
 import { parseIngredient } from '@kochfeinde/shared';
 import { renderRecipe } from './recipeParser';
+import { Link } from '@tanstack/react-router';
 
 const boldKeymap: KeyBinding = {
     key: "Ctrl-b",
@@ -109,6 +110,7 @@ export default function RecipeEditCode({
                     ),
                 ]}
             />
+            <Link to='/help' className='underline'>Wie schreibe ich Rezepte?</Link>
             <h4>
                 Gefundene Zutaten:
             </h4>

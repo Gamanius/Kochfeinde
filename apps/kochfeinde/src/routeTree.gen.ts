@@ -16,6 +16,7 @@ import { Route as RecipeIndexRouteImport } from './routes/recipe/index'
 import { Route as ProfileIndexRouteImport } from './routes/profile/index'
 import { Route as LoginIndexRouteImport } from './routes/login/index'
 import { Route as IngredientIndexRouteImport } from './routes/ingredient/index'
+import { Route as HelpIndexRouteImport } from './routes/help/index'
 import { Route as RecipeAddIndexRouteImport } from './routes/recipe/add/index'
 import { Route as RecipeSlugIndexRouteImport } from './routes/recipe/$slug/index'
 import { Route as IngredientAddIndexRouteImport } from './routes/ingredient/add/index'
@@ -58,6 +59,11 @@ const IngredientIndexRoute = IngredientIndexRouteImport.update({
   path: '/ingredient/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const HelpIndexRoute = HelpIndexRouteImport.update({
+  id: '/help/',
+  path: '/help/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const RecipeAddIndexRoute = RecipeAddIndexRouteImport.update({
   id: '/recipe/add/',
   path: '/recipe/add/',
@@ -91,6 +97,7 @@ const IngredientSlugEditIndexRoute = IngredientSlugEditIndexRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/help/': typeof HelpIndexRoute
   '/ingredient/': typeof IngredientIndexRoute
   '/login/': typeof LoginIndexRoute
   '/profile/': typeof ProfileIndexRoute
@@ -106,6 +113,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/help': typeof HelpIndexRoute
   '/ingredient': typeof IngredientIndexRoute
   '/login': typeof LoginIndexRoute
   '/profile': typeof ProfileIndexRoute
@@ -122,6 +130,7 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/help/': typeof HelpIndexRoute
   '/ingredient/': typeof IngredientIndexRoute
   '/login/': typeof LoginIndexRoute
   '/profile/': typeof ProfileIndexRoute
@@ -139,6 +148,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/help/'
     | '/ingredient/'
     | '/login/'
     | '/profile/'
@@ -154,6 +164,7 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/help'
     | '/ingredient'
     | '/login'
     | '/profile'
@@ -169,6 +180,7 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
+    | '/help/'
     | '/ingredient/'
     | '/login/'
     | '/profile/'
@@ -185,6 +197,7 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  HelpIndexRoute: typeof HelpIndexRoute
   IngredientIndexRoute: typeof IngredientIndexRoute
   LoginIndexRoute: typeof LoginIndexRoute
   ProfileIndexRoute: typeof ProfileIndexRoute
@@ -250,6 +263,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IngredientIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/help/': {
+      id: '/help/'
+      path: '/help'
+      fullPath: '/help/'
+      preLoaderRoute: typeof HelpIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/recipe/add/': {
       id: '/recipe/add/'
       path: '/recipe/add'
@@ -297,6 +317,7 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  HelpIndexRoute: HelpIndexRoute,
   IngredientIndexRoute: IngredientIndexRoute,
   LoginIndexRoute: LoginIndexRoute,
   ProfileIndexRoute: ProfileIndexRoute,

@@ -18,7 +18,7 @@ export default function RecipeList() {
 
     return (
         <>  
-        <div className="flex justify-center mt-4">
+        <div className="flex justify-center mt-4 mx-4">
             <label className="input mb-4 w-full max-w-md mx-auto">
                 <input
                     type="text"
