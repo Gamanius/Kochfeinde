@@ -1,6 +1,7 @@
 import type { IngredientUnitType } from "./ingredient.schema"
 
-const ingredientSlugRegex = new RegExp(/-\s+(\d*[,.]?\d*)\s*([^\d\n]*)\s+\[.*\]\(\/ingredient\/(.*)\)/, "g")
+const ingredientSlugRegex = new RegExp(/-\s+(\d*[,.]?\d*)\s*([^\d\n]*)\s+\[(.*)\]\(\/ingredient\/(.*)\)/, "g")
+const ingredientCustomRegex = new RegExp(/-\s+(\d*[,.]?\d*)\s*([^\d\n]*)\s+\[(.+)\](?!\()/, "g")
 
 type UnitMapping = {
     unit: IngredientUnitType
@@ -61,7 +62,8 @@ export function normalizeUnit(raw: string | null): UnitMapping {
 }
 
 export type RecipeIngredient = {
-    ingredient_slug : string,
+    name: string,
+    ingredient_slug : string | null,
     quantity: number | null,
     unit: IngredientUnitType,
 }
@@ -80,7 +82,9 @@ export function mergeIngredients(
     const merged = new Map<string, RecipeIngredient>()
 
     for (const i of ingredients) {
-        const existing = merged.get(i.ingredient_slug)
+        // Use slug as key for DB ingredients, fall back to name for custom ones
+        const key = i.ingredient_slug ?? `__custom__${i.name}`
+        const existing = merged.get(key)
         if (existing) {
             // Pick the better unit — prefer GRAMM/LITER over PIECE
             if (UNIT_PREFERENCE[i.unit] > UNIT_PREFERENCE[existing.unit]) {
@@ -95,28 +99,79 @@ export function mergeIngredients(
             }
             // both null → keep null, existing non-null & i null → keep existing
         } else {
-            merged.set(i.ingredient_slug, { ...i })
+            merged.set(key, { ...i })
         }
     }
 
     return Array.from(merged.values())
 }
 
-export function parseIngredient(input: string): Array<RecipeIngredient> {
-    const matches = Array.from(input.matchAll(ingredientSlugRegex))
+/**
+ * Merges duplicate ingredients only when they have the same ingredient
+ * (slug or custom name) AND the same unit.
+ *
+ * Quantities are summed when both are present. If one quantity is null,
+ * the non-null quantity is kept.
+ */
+export function simpleMergeIngredients(
+  ingredients: RecipeIngredient[],
+): RecipeIngredient[] {
+  const merged = new Map<string, RecipeIngredient>();
 
-    const parsed = matches.map((match) => {
-        const [, rawQuantity = "", rawUnit = "", ingredient_slug = ""] = match
+    for (const ingredient of ingredients) {
+        const ingredientKey =
+        ingredient.ingredient_slug ?? `__custom__${ingredient.name}`;
+
+        const key = `${ingredientKey}:${ingredient.unit}`;
+
+        const existing = merged.get(key);
+
+        if (!existing) {
+            merged.set(key, { ...ingredient });
+            continue;
+        }
+
+        if (existing.quantity === null) {
+        existing.quantity = ingredient.quantity;
+        } else if (ingredient.quantity !== null) {
+        existing.quantity += ingredient.quantity;
+        }
+    }
+
+  return [...merged.values()];
+}
+
+export function parseIngredient(input: string): Array<RecipeIngredient> {
+    const slugMatches = Array.from(input.matchAll(ingredientSlugRegex))
+    const customMatches = Array.from(input.matchAll(ingredientCustomRegex))
+
+    const parsed: RecipeIngredient[] = []
+
+    for (const match of slugMatches) {
+        const [, rawQuantity = "", rawUnit = "", name = "", ingredient_slug = ""] = match
         const normalizedQuantity = rawQuantity.replace(",", ".")
         const quantity = normalizedQuantity ? Number.parseFloat(normalizedQuantity) : 0
         const mapping = normalizeUnit(rawUnit.trim())
-
-        return {
+        parsed.push({
+            name: name.trim(),
             ingredient_slug,
             quantity: Number.isNaN(quantity) ? null : quantity * mapping.factor,
             unit: mapping.unit,
-        }
-    })
+        })
+    }
 
-    return mergeIngredients(parsed)
+    for (const match of customMatches) {
+        const [, rawQuantity = "", rawUnit = "", name = ""] = match
+        const normalizedQuantity = rawQuantity.replace(",", ".")
+        const quantity = normalizedQuantity ? Number.parseFloat(normalizedQuantity) : 0
+        const mapping = normalizeUnit(rawUnit.trim())
+        parsed.push({
+            name: name.trim(),
+            ingredient_slug: null,
+            quantity: Number.isNaN(quantity) ? null : quantity * mapping.factor,
+            unit: mapping.unit,
+        })
+    }
+
+    return simpleMergeIngredients(parsed)
 }

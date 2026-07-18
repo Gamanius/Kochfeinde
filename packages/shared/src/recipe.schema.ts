@@ -11,6 +11,7 @@ export const RecipeListSchema = z.array(z.object({
     undertitle: z.string().nullable(),
     author: z.string(),
     tags: z.array(RecipeTagSchema).nullable(),
+    portion_num: z.int()
 }))
 export type RecipeListType = z.infer<typeof RecipeListSchema>;
 

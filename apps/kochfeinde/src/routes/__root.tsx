@@ -67,8 +67,6 @@ export const Route = createRootRoute({
 
 const apiUrl = typeof window !== 'undefined' ? '/api' : (process.env.VITE_API_URL ?? 'http://localhost:3001');
 
-console.log(apiUrl)
-
 function RootDocument({ children }: { children: React.ReactNode }) {
   const queryClient = getQueryClient();
   const trpcClient = createTRPCClient<AppRouter>({

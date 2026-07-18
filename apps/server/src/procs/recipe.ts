@@ -1,4 +1,4 @@
-import { InsertRecipeSchema, parseIngredient, PatchRecipeSchema, QueryRecipeSchema, type RecipeListType, type RecipeType } from "@kochfeinde/shared";
+import { InsertRecipeSchema, mergeIngredients, parseIngredient, PatchRecipeSchema, QueryRecipeSchema, type RecipeListType, type RecipeType } from "@kochfeinde/shared";
 import { protectedProcedure, publicProcedure, router } from "../trcp";
 import { db } from "../db/database"
 import {ingredientTable, ingredientToRecipe, recipeTable, userTable} from "../db/schema"
@@ -21,7 +21,8 @@ export const recipeRouter = router({
                 author: r.user.displayName,
                 total_time: r.recipe.time_total,
                 undertitle: r.recipe.undertitle,
-                tags: r.recipe.tags
+                tags: r.recipe.tags,
+                portion_num: r.recipe.portion_num || 4
             }
         ))
 
@@ -85,12 +86,13 @@ export const recipeRouter = router({
         }
     }),
     patch: protectedProcedure.input(PatchRecipeSchema).mutation(async (opt) => {
+        const undertitle_normalized = opt.input.undertitle ? opt.input.undertitle.trim() : ""
         const res = await db.update(recipeTable).set({
             markdown: opt.input.markdown,
             name: opt.input.name,
             time_active: opt.input.active_time,
             time_total: opt.input.total_time,
-            undertitle: opt.input.undertitle,
+            undertitle: undertitle_normalized === "" ? null : undertitle_normalized,
             tags: opt.input.tags,
             portion_num: opt.input.portion_num,
             portion_string: opt.input.portion_string
@@ -109,33 +111,38 @@ export const recipeRouter = router({
 
         const recipe = res[0]
 
-        const ingredients = parseIngredient(opt.input.markdown)
+        const ingredients = mergeIngredients(parseIngredient(opt.input.markdown))
 
-        // Get unique ingredient slugs to avoid duplicates in DB query
-        const uniqueSlugs = [...new Set(ingredients.map(i => i.ingredient_slug))]
+        // Separate DB-linked ingredients from custom ingredients
+        const dbIngredients = ingredients.filter(i => i.ingredient_slug !== null)
+
+        // Get unique ingredient slugs for DB lookup (exclude nulls)
+        const uniqueSlugs = [...new Set(dbIngredients.map(i => i.ingredient_slug as string))]
 
         await db.delete(ingredientToRecipe).where(eq(ingredientToRecipe.recipeId, recipe.id))
-        const all_ings = await db.select()
-            .from(ingredientTable)
-            .where(inArray(ingredientTable.slug, uniqueSlugs))
 
-        // Check that every ingredient exists in the database
-        if (uniqueSlugs.length !== all_ings.length) {
-            const foundSlugs = new Set(all_ings.map(i => i.slug))
-            const missingSlugs = uniqueSlugs.filter(s => !foundSlugs.has(s))
-            throw new TRPCError({
-                code: "NOT_FOUND",
-                message: `Diese Zutaten existieren nicht in der Datenbank: ${missingSlugs.join(", ")}`
-            })
-        }
+        // Only query DB ingredients when there are actual slugs to look up
+        if (uniqueSlugs.length > 0) {
+            const all_ings = await db.select()
+                .from(ingredientTable)
+                .where(inArray(ingredientTable.slug, uniqueSlugs))
 
-        const slugToId = Object.fromEntries(all_ings.map(i => [i.slug, i.id]))
+            // Check that every ingredient exists in the database
+            if (uniqueSlugs.length !== all_ings.length) {
+                const foundSlugs = new Set(all_ings.map(i => i.slug))
+                const missingSlugs = uniqueSlugs.filter(s => !foundSlugs.has(s))
+                throw new TRPCError({
+                    code: "NOT_FOUND",
+                    message: `Diese Zutaten existieren nicht in der Datenbank: ${missingSlugs.join(", ")}`
+                })
+            }
 
-        if (ingredients.length > 0) {
-            await db.insert(ingredientToRecipe).values(ingredients.map(i => {
+            const slugToId = Object.fromEntries(all_ings.map(i => [i.slug, i.id]))
+
+            await db.insert(ingredientToRecipe).values(dbIngredients.map(i => {
                 return {
                     recipeId: recipe.id,
-                    ingredientId: slugToId[i.ingredient_slug],
+                    ingredientId: slugToId[i.ingredient_slug as string],
                     quantity: i.quantity,
                     unit: i.unit,
                 }

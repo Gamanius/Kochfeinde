@@ -114,8 +114,8 @@ export default function RecipeEditCode({
             </h4>
             <ul>
                 {parsedingredients.map(i => (
-                    <li>
-                        {i.quantity} {i.unit} ingredient/{i.ingredient_slug}
+                    <li key={i.ingredient_slug ?? i.name}>
+                        {i.quantity} {i.unit} {i.ingredient_slug ? `ingredient/${i.ingredient_slug}` : `(custom) ${i.name}`}
                     </li>
                 ))}
             </ul>

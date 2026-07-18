@@ -1,0 +1,19 @@
+{
+  "features": {
+    "ghcr.io/devcontainers-extra/features/caddy:1": {
+      "version": "1.0.11",
+      "resolved": "ghcr.io/devcontainers-extra/features/caddy@sha256:5538c8afde2f4e671e42323d2817be7d69943fbea32035cde33f5d57b6de967a",
+      "integrity": "sha256:5538c8afde2f4e671e42323d2817be7d69943fbea32035cde33f5d57b6de967a"
+    },
+    "ghcr.io/devcontainers-extra/features/typescript:2": {
+      "version": "2.0.16",
+      "resolved": "ghcr.io/devcontainers-extra/features/typescript@sha256:a6bb60b4e02edb858f22e18b691ac7223dd7dfb52708e84d887488e326bd48f5",
+      "integrity": "sha256:a6bb60b4e02edb858f22e18b691ac7223dd7dfb52708e84d887488e326bd48f5"
+    },
+    "ghcr.io/guiyomh/features/just:0": {
+      "version": "0.1.0",
+      "resolved": "ghcr.io/guiyomh/features/just@sha256:8311dff976bd153a54a879021353a7e149963e580022b25af49c45cfc5f13bec",
+      "integrity": "sha256:8311dff976bd153a54a879021353a7e149963e580022b25af49c45cfc5f13bec"
+    }
+  }
+}

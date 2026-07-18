@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as ShoppingListIndexRouteImport } from './routes/shopping-list/index'
 import { Route as RegisterIndexRouteImport } from './routes/register/index'
 import { Route as RecipeIndexRouteImport } from './routes/recipe/index'
 import { Route as ProfileIndexRouteImport } from './routes/profile/index'
@@ -25,6 +26,11 @@ import { Route as IngredientSlugEditIndexRouteImport } from './routes/ingredient
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ShoppingListIndexRoute = ShoppingListIndexRouteImport.update({
+  id: '/shopping-list/',
+  path: '/shopping-list/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const RegisterIndexRoute = RegisterIndexRouteImport.update({
@@ -90,6 +96,7 @@ export interface FileRoutesByFullPath {
   '/profile/': typeof ProfileIndexRoute
   '/recipe/': typeof RecipeIndexRoute
   '/register/': typeof RegisterIndexRoute
+  '/shopping-list/': typeof ShoppingListIndexRoute
   '/ingredient/$slug/': typeof IngredientSlugIndexRoute
   '/ingredient/add/': typeof IngredientAddIndexRoute
   '/recipe/$slug/': typeof RecipeSlugIndexRoute
@@ -104,6 +111,7 @@ export interface FileRoutesByTo {
   '/profile': typeof ProfileIndexRoute
   '/recipe': typeof RecipeIndexRoute
   '/register': typeof RegisterIndexRoute
+  '/shopping-list': typeof ShoppingListIndexRoute
   '/ingredient/$slug': typeof IngredientSlugIndexRoute
   '/ingredient/add': typeof IngredientAddIndexRoute
   '/recipe/$slug': typeof RecipeSlugIndexRoute
@@ -119,6 +127,7 @@ export interface FileRoutesById {
   '/profile/': typeof ProfileIndexRoute
   '/recipe/': typeof RecipeIndexRoute
   '/register/': typeof RegisterIndexRoute
+  '/shopping-list/': typeof ShoppingListIndexRoute
   '/ingredient/$slug/': typeof IngredientSlugIndexRoute
   '/ingredient/add/': typeof IngredientAddIndexRoute
   '/recipe/$slug/': typeof RecipeSlugIndexRoute
@@ -135,6 +144,7 @@ export interface FileRouteTypes {
     | '/profile/'
     | '/recipe/'
     | '/register/'
+    | '/shopping-list/'
     | '/ingredient/$slug/'
     | '/ingredient/add/'
     | '/recipe/$slug/'
@@ -149,6 +159,7 @@ export interface FileRouteTypes {
     | '/profile'
     | '/recipe'
     | '/register'
+    | '/shopping-list'
     | '/ingredient/$slug'
     | '/ingredient/add'
     | '/recipe/$slug'
@@ -163,6 +174,7 @@ export interface FileRouteTypes {
     | '/profile/'
     | '/recipe/'
     | '/register/'
+    | '/shopping-list/'
     | '/ingredient/$slug/'
     | '/ingredient/add/'
     | '/recipe/$slug/'
@@ -178,6 +190,7 @@ export interface RootRouteChildren {
   ProfileIndexRoute: typeof ProfileIndexRoute
   RecipeIndexRoute: typeof RecipeIndexRoute
   RegisterIndexRoute: typeof RegisterIndexRoute
+  ShoppingListIndexRoute: typeof ShoppingListIndexRoute
   IngredientSlugIndexRoute: typeof IngredientSlugIndexRoute
   IngredientAddIndexRoute: typeof IngredientAddIndexRoute
   RecipeSlugIndexRoute: typeof RecipeSlugIndexRoute
@@ -193,6 +206,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/shopping-list/': {
+      id: '/shopping-list/'
+      path: '/shopping-list'
+      fullPath: '/shopping-list/'
+      preLoaderRoute: typeof ShoppingListIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/register/': {
@@ -282,6 +302,7 @@ const rootRouteChildren: RootRouteChildren = {
   ProfileIndexRoute: ProfileIndexRoute,
   RecipeIndexRoute: RecipeIndexRoute,
   RegisterIndexRoute: RegisterIndexRoute,
+  ShoppingListIndexRoute: ShoppingListIndexRoute,
   IngredientSlugIndexRoute: IngredientSlugIndexRoute,
   IngredientAddIndexRoute: IngredientAddIndexRoute,
   RecipeSlugIndexRoute: RecipeSlugIndexRoute,

@@ -1,21 +1,25 @@
 import { Link } from "@tanstack/react-router";
 import Logo from "./Logo"
-import { Sun, Moon, User, UserCog, LogOut, LogIn, SunMoon, MonitorCog } from 'lucide-react';
+import { Sun, Moon, User, UserCog, LogOut, LogIn, SunMoon, MonitorCog, List } from 'lucide-react';
 import { useTRPC } from "#/query/trcp";
-import { useMutation, useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import ListDropdown from "./list/listDropdown";
+import { useRecipeListStore } from "./list/listContext";
 
 export default function Header() {
     const trpc = useTRPC()
     const query = useQueryClient()
-    const {data: user} = useSuspenseQuery(trpc.auth.get.queryOptions())
+    const user = useQuery(trpc.auth.get.queryOptions())
     const mut = useMutation(trpc.auth.logout.mutationOptions({
         onSettled: () => {
             query.invalidateQueries(trpc.auth.get.queryOptions())
         }
     }));
 
+    const amount = useRecipeListStore((s) => Object.keys(s.list).length)
+
     return <>
-        <header className="grid grid-cols-[1fr_1fr] justify-center p-2 bg-base-200 border-b border-b-base-300 gap-2 items-center">
+        <header className="grid grid-cols-[min-content_1fr] justify-center p-2 bg-base-200 border-b border-b-base-300 gap-2 items-center">
             <span className="flex">
                 <Link to="/" className="font-bold flex justify-center items-center">
                 <Logo/>
@@ -30,15 +34,24 @@ export default function Header() {
                     <SunMoon />
                 </button>
 
-                {user === null ? <>
+                <div className="indicator mr-2">
+                    <span className="indicator-item badge badge-sm mr-1 mt-1 badge-primary">{amount}</span>
+                    <button className="btn btn-square btn-ghost" popoverTarget="recipe-list" style={{anchorName: "--recipe-list"}}>
+                        <List></List>
+                    </button>
+                </div>
+
+                {user.data === null || user.data === undefined ? <>
                 <div className="hover:aura hover:aura-rainbow p-0.5">
+                    {user.isLoading ? <span className="loading loading-infinity btn btn-disabled"></span> : 
                     <Link to="/login" className="btn btn-ghost btn-square bg-base-100">
                         <LogIn />
                     </Link>
+                    }
                 </div>
                 </> : <>
                     <button className="btn" popoverTarget="header-user" style={{ anchorName: "--header-user" } /* as React.CSSProperties */}>
-                        <User/> {user.displayname}
+                        <User/> {user.data.displayname}
                     </button>
                 </>}
             </span>
@@ -76,6 +89,8 @@ export default function Header() {
                 <li><Link to="/profile"> <UserCog/> Einstellungen</Link></li>
                 <li><button onClick={() => mut.mutate()}> <LogOut/> Ausloggen</button></li>
             </ul>
+
+            <ListDropdown/>
         </header>
     </>
 }

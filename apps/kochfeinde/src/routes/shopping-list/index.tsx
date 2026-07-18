@@ -1,0 +1,124 @@
+import { createFileRoute, useNavigate } from '@tanstack/react-router'
+import { useTRPC } from '#/query/trcp'
+import { useSuspenseQueries } from '@tanstack/react-query'
+import { useEffect, useMemo } from 'react'
+import { parseIngredient } from '@kochfeinde/shared'
+import { scaleNumbers } from '#/components/recipe/recipeParser'
+
+export const Route = createFileRoute('/shopping-list/')({
+  validateSearch: (search: Record<string, string | undefined>) => ({
+    r: search.r ?? '',
+    m: search.m ?? '',
+  }),
+  ssr: false,
+  component: RouteComponent,
+})
+
+function decodeBitmask(hex: string, length: number): boolean[] {
+  if (!hex) return Array(length).fill(false)
+  try {
+    const bin = BigInt(`0x${hex}`).toString(2)
+    // LSB (rightmost) = ingredient 0, so reverse
+    const bits = bin.split('').reverse()
+    return Array.from({ length }, (_, i) => bits[i] === '1')
+  } catch {
+    return Array(length).fill(false)
+  }
+}
+
+function encodeBitmask(checked: boolean[]): string {
+  if (checked.every(c => !c)) return ''
+  // Reverse so LSB = ingredient 0
+  let bits = checked.map(c => c ? '1' : '0').reverse().join('')
+  // Trim leading zeros
+  bits = bits.replace(/^0+/, '')
+  if (bits.length === 0) return ''
+  return BigInt(`0b${bits}`).toString(16)
+}
+
+function formatQuantity(qty: number | null): string {
+  if (qty === null) return ''
+  // Round to 2 decimal places, remove trailing zeros
+  return qty % 1 === 0 ? qty.toString() : qty.toFixed(2).replace(/\.?0+$/, '')
+}
+
+const UNIT_LABELS: Record<string, string> = {
+  LITER: 'l',
+  GRAMM: 'g',
+  PIECE: '',
+}
+
+function RouteComponent() {
+    const { r, m } = Route.useSearch()
+    const navigate = useNavigate()
+    const slugEntries = r ? r.split(',').filter(Boolean).map(part => {
+        const [slug, amountStr] = part.split(':')
+        return { slug, amount: amountStr ? parseInt(amountStr, 10) : 4 }
+    }) : []
+
+    // Save r and m to localStorage whenever they change
+    useEffect(() => {
+        if (r) localStorage.setItem('kochfeinde_shopping_r', r)
+        else localStorage.removeItem('kochfeinde_shopping_r')
+        if (m) localStorage.setItem('kochfeinde_shopping_m', m)
+        else localStorage.removeItem('kochfeinde_shopping_m')
+    }, [r, m])
+
+    const trpc = useTRPC()
+
+    const recipeQueries = useSuspenseQueries({
+            queries: slugEntries.map(e => ({
+            ...trpc.recipe.get.queryOptions({slug: e.slug})
+        })),
+    })
+
+    
+
+    const ings = parseIngredient(recipeQueries.reduce(
+        (acc, curr, i) => acc + scaleNumbers(curr.data.markdown, slugEntries[i].amount/curr.data.portion_num),
+        ""
+    ))
+
+    const checked = useMemo(() => decodeBitmask(m, ings.length), [m, ings.length])
+
+    function toggleItem(index: number) {
+        const newChecked = [...checked]
+        newChecked[index] = !newChecked[index]
+        const newM = encodeBitmask(newChecked)
+        navigate({
+            to: '/shopping-list',
+            search: { r: r || '', m: newM || '' },
+            replace: true,
+        })
+    }
+
+    return (
+        <div className='flex justify-center min-w-full'>
+            <div className="mx-4  p-10 max-w-4xl w-full shadow-2xl ">
+                <div className='border-b mb-4'>
+                    <h1>
+                        Zutaten
+                    </h1>
+                    <div className='flex flex-wrap gap-2 mb-2'>
+                        {recipeQueries.map((e, i) => {
+                            return <span key={e.data.slug} className='badge badge-primary badge-lg'>
+                                {e.data.name} ({slugEntries[i].amount} {e.data.portion_string})
+                            </span>
+                        })}
+                    </div>
+                </div>
+                <ul className='space-y-2'>
+                    {ings.map((e, i) => (
+                        <li key={i} className={`flex items-center gap-3 p-2 rounded-lg cursor-pointer hover:bg-base-200 transition-colors ${checked[i] ? 'opacity-40 line-through' : ''}`}
+                            onClick={() => toggleItem(i)}>
+                            <input className={`checkbox`} type='checkbox' checked={checked[i]} readOnly>
+                            </input>
+                            <span className='flex-1'>{e.name}</span>
+                            <span className='text-sm opacity-60'>{formatQuantity(e.quantity)}{UNIT_LABELS[e.unit] ? ` ${UNIT_LABELS[e.unit]}` : ''}</span>
+                        </li>
+                    ))}
+                </ul>
+            </div>
+        </div>
+    )
+}
