@@ -1,4 +1,5 @@
-import { useEffect, type RefObject } from 'react'
+import { useEffect  } from 'react'
+import type {RefObject} from 'react';
 import type { ConfettiRef } from '#/components/list/confetti'
 
 const BURSTS = [
