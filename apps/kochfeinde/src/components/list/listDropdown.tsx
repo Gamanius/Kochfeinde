@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Minus, Plus, ScrollText, ShoppingCart, Trash } from "lucide-react";
 import { useRecipeListStore } from "./listContext"
 import { Link } from "@tanstack/react-router";
@@ -21,8 +22,7 @@ export default function ListDropdown() {
     const clearList = useRecipeListStore(s => s.clearList);
     const entries = Object.entries(list);
 
-
-    const restoredR = localStorage.getItem('kochfeinde_shopping_r')
+    const [hasRestored, setHasRestored] = useState(() => localStorage.getItem('kochfeinde_shopping_r') !== null)
 
     const slugs = entries.map((e) => `${e[0]}:${e[1].amount}`).join(",");
 
@@ -45,6 +45,7 @@ export default function ListDropdown() {
                     <li>
                         <Link to="/shopping-list" search={{ r: slugs, m: '0' }} className="btn btn-ghost w-full" onClick={e => {
                             (e.currentTarget.closest("[popover]") as HTMLElement).hidePopover();
+                            setHasRestored(true)
                         }}>
                             <ShoppingCart /> Einkaufsliste Erstellen
                         </Link>
@@ -54,18 +55,28 @@ export default function ListDropdown() {
                             Liste leeren
                         </button>
                     </li>
-                    <div className="divider my-1"></div>
                     </>
                     
                 ) : null}
-                {restoredR === null ||
+                {hasRestored === false ||
+                <>
+                    <div className="divider my-1"></div>
                     <li>
                         <Link to="/shopping-list" search={{r: "", m: ""}} className="btn btn-ghost w-full">
                             <ScrollText/> Letzte Liste öffnen
                         </Link>
                     </li>
+                    <li>
+                        <button className="btn btn-ghost btn-xs w-full text-error" onClick={() => {
+                            localStorage.removeItem('kochfeinde_shopping_r')
+                            localStorage.removeItem('kochfeinde_shopping_m')
+                            setHasRestored(false)
+                        }}>
+                            Letzte List löschen
+                        </button>
+                    </li>
+                </>
                 }
-
         </ul>
     );
 }

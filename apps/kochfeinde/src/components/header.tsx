@@ -17,8 +17,7 @@ export default function Header() {
     }));
 
     const amount = useRecipeListStore((s) => Object.keys(s.list).length)
-    const restoredR = localStorage.getItem('kochfeinde_shopping_r')
-
+    const restoredR = typeof window !== 'undefined' ? localStorage.getItem('kochfeinde_shopping_r') : null
 
     return <>
         <header className="grid grid-cols-[min-content_1fr] justify-center p-2 bg-base-200 border-b border-b-base-300 gap-2 items-center">

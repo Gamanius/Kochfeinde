@@ -1,9 +1,11 @@
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { useTRPC } from '#/query/trcp'
 import { useSuspenseQueries } from '@tanstack/react-query'
-import { useEffect, useMemo } from 'react'
+import { useEffect, useMemo, useRef } from 'react'
 import { parseIngredient } from '@kochfeinde/shared'
 import { scaleNumbers } from '#/components/recipe/recipeParser'
+import { Confetti  } from '#/components/list/confetti'
+import type {ConfettiRef} from '#/components/list/confetti';
 
 export const Route = createFileRoute('/shopping-list/')({
   validateSearch: (search: Record<string, string | undefined>) => ({
@@ -84,15 +86,14 @@ function RouteComponent() {
         else localStorage.removeItem('kochfeinde_shopping_m')
     }, [r, m])
 
+    
     const trpc = useTRPC()
-
+    
     const recipeQueries = useSuspenseQueries({
-            queries: slugEntries.map(e => ({
+        queries: slugEntries.map(e => ({
             ...trpc.recipe.get.queryOptions({slug: e.slug})
         })),
     })
-
-    
 
     const ings = parseIngredient(recipeQueries.reduce(
         (acc, curr, i) => acc + scaleNumbers(curr.data.markdown, slugEntries[i].amount/curr.data.portion_num),
@@ -101,13 +102,29 @@ function RouteComponent() {
 
     const checked = useMemo(() => decodeBitmask(m, ings.length), [m, ings.length])
 
+    const confettiRef = useRef<ConfettiRef>(null)
+    useEffect(() => {
+        if (checked.every(a => a)) {
+            const bursts = [
+                { origin: { x: 0.5, y: 0.8 }, spread: 60, particleCount: 80 },
+                { origin: { x: 0, y: 0.9 }, spread: 40, angle: 60, particleCount: 50 },
+                { origin: { x: 0, y: 0.7 }, spread: 30, angle: 70, particleCount: 40 },
+                { origin: { x: 1, y: 0.9 }, spread: 40, angle: 120, particleCount: 50 },
+                { origin: { x: 1, y: 0.7 }, spread: 30, angle: 110, particleCount: 40 },
+                { origin: { x: 0.5, y: 1 }, spread: 80, particleCount: 50 },
+                { origin: { x: 0.5, y: 0.3 }, spread: 120, particleCount: 60 },
+            ]
+            bursts.forEach(b => confettiRef.current?.fire(b))
+        }
+    }, [confettiRef, checked])
+    
     function toggleItem(index: number) {
         const newChecked = [...checked]
         newChecked[index] = !newChecked[index]
         const newM = encodeBitmask(newChecked)
         navigate({
             to: '/shopping-list',
-            search: { r: r || '', m: newM || '' },
+            search: { r: r || '', m: newM || '0' },
             replace: true,
             resetScroll: false,
         })
@@ -122,7 +139,7 @@ function RouteComponent() {
                     </h1>
                     <div className='flex flex-wrap gap-2 mb-2'>
                         {recipeQueries.map((e, i) => {
-                            return <span key={e.data.slug} className='badge badge-primary badge-lg'>
+                            return <span key={e.data.slug} className='flex h-auto badge badge-primary badge-lg'>
                                 {e.data.name} ({slugEntries[i].amount} {e.data.portion_string})
                             </span>
                         })}
@@ -140,6 +157,10 @@ function RouteComponent() {
                     ))}
                 </ul>
             </div>
+            <Confetti 
+                manualstart={true}
+                ref={confettiRef}
+                className="absolute top-0 left-0 -z-1 size-full"/>
         </div>
     )
 }
