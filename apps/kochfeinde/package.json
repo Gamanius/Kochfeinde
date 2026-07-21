@@ -39,6 +39,7 @@
     "nitro": "^3.0.260610-beta",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
+    "react-flip-toolkit": "^7.2.4",
     "react-hook-form": "^7.80.0",
     "sanitize-html": "^2.17.5",
     "slugify": "^1.6.9",

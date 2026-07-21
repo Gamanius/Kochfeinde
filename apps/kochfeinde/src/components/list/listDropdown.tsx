@@ -62,7 +62,9 @@ export default function ListDropdown() {
                 <>
                     <div className="divider my-1"></div>
                     <li>
-                        <Link to="/shopping-list" search={{r: "", m: ""}} className="btn btn-ghost w-full">
+                        <Link to="/shopping-list" search={{r: "", m: ""}} className="btn btn-ghost w-full" onClick={e => {
+                            (e.currentTarget.closest("[popover]") as HTMLElement).hidePopover();
+                        }}>
                             <ScrollText/> Letzte Liste öffnen
                         </Link>
                     </li>

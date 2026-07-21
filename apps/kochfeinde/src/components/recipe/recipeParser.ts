@@ -9,7 +9,7 @@ function addCheckboxes(html: string): string {
 
 export function scaleNumbers(md: string, scale: number) : string {
     return md.replace(/(\d+[.,]\d+|\d+)(?!\d*[.,]\d*!|\d*!)/gm, e => {
-        return `${String(parseFloat(e.replace(",", ".")) * scale)}`
+        return `${parseFloat((parseFloat(e.replace(",", ".")) * scale).toFixed(2)).toString()}`
     }).replace(/(\d+[.,]\d+|\d+)!/gm, e => {
         return e.slice(0, -1)
     })

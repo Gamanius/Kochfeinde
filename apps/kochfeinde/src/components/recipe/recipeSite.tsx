@@ -1,7 +1,7 @@
 import { useTRPC } from "#/query/trcp"
 import { useSuspenseQuery } from "@tanstack/react-query"
 import { Link } from "@tanstack/react-router"
-import {ChevronLeft, CircleUserRound, Lock, Minus, Plus, Quote, SquarePen, Timer, Zap} from "lucide-react"
+import {ChefHat, ChevronLeft, CircleUserRound, Lock, Minus, Plus, Quote, SquarePen, Timer, Zap} from "lucide-react"
 import { renderRecipe } from "./recipeParser"
 import { tagLabelMap } from "@kochfeinde/shared"
 import { useState } from "react"
@@ -16,7 +16,7 @@ function changeVal(num: string, val : number) : string {
 
     newVal += val;
 
-    return String(newVal.toFixed(2))
+    return parseFloat(newVal.toFixed(2)).toString()
 }
 
 
@@ -58,10 +58,11 @@ export default function RecipeSite({slug}:{slug:string}) {
             <span className="inline-flex items-center gap-1 mt-1"><Quote /> <i>{res.data.undertitle}</i></span>
             }
             {/* Widgets */}
-            <div className="grid grid-cols-3 mt-1">
+            <div className={`grid ${res.data.total_time !== res.data.active_time ? "grid-cols-3": "grid-cols-2"} mt-1`}>
                 <span className="inline-flex items-center gap-1"><CircleUserRound /> {res.data.author}</span>
-                <span className="inline-flex items-center gap-1 justify-self-center"><Timer />{res.data.total_time} min</span>
-                <span className="inline-flex items-center gap-1 justify-self-end"><Zap /> {res.data.active_time} min</span>
+                {res.data.total_time === res.data.active_time ||
+                <span className="inline-flex items-center gap-1 justify-self-center"><Timer />{res.data.total_time} min</span>}
+                <span className="inline-flex items-center gap-1 justify-self-end"><ChefHat /> {res.data.active_time} min</span>
             </div>
             <div className="flex flex-wrap gap-2 mt-2 max-h-18 overflow-scroll">
                 {res.data.tags?.sort().map(tag => (
@@ -82,7 +83,7 @@ export default function RecipeSite({slug}:{slug:string}) {
                                 if (isNaN(val)) {
                                     setPortionNum(String(res.data.portion_num))
                                 } else {
-                                    setPortionNum(String(val.toFixed(2)))
+                                    setPortionNum(parseFloat(val.toFixed(2)).toString())
                                 }
                             }}
                             />

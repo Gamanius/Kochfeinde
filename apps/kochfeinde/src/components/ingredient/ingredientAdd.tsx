@@ -55,7 +55,7 @@ export default function IngredientAdd() {
     return <>
         <Card title="Zutat hinzufügen">
         <form onSubmit={handleSubmit(onSubmit)}>
-            <div className="grid grid-cols-2">
+            <div className="flex justify-between flex-wrap">
 
             <fieldset className="fieldset">
                 <legend className="fieldset-legend">Allgemeine Information</legend>
@@ -75,7 +75,7 @@ export default function IngredientAdd() {
             </fieldset>
 
             <fieldset className="fieldset">
-                <legend className="fieldset-legend">Aus <a href="https://naehrwertdaten.ch">Schweizer Nährwertdatenbank</a> importieren</legend>
+                <legend className="fieldset-legend">Aus <a className="underline" href="https://naehrwertdaten.ch" target="_blank" rel="noopener noreferrer">Schweizer Nährwertdatenbank</a> importieren</legend>
                 <div className="flex gap-2 items-end">
                     <label className="floating-label">
                         <span className="label-text">ID</span>
